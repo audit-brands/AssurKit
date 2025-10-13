@@ -9,6 +9,10 @@ use Slim\Factory\AppFactory;
 require __DIR__ . '/../vendor/autoload.php';
 
 use AssurKit\Database\Connection;
+use AssurKit\Services\JwtService;
+use AssurKit\Controllers\AuthController;
+use AssurKit\Middleware\AuthMiddleware;
+use AssurKit\Middleware\RoleMiddleware;
 
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
@@ -18,6 +22,11 @@ if (file_exists(dirname(__DIR__) . '/.env')) {
 
 // Initialize database connection
 Connection::getInstance();
+
+// Initialize services
+$jwtService = new JwtService();
+$authController = new AuthController($jwtService);
+$authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
 $app = AppFactory::create();
@@ -57,5 +66,29 @@ $app->get('/health', function (Request $request, Response $response) {
 
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+// Authentication routes (public)
+$app->post('/auth/login', [$authController, 'login']);
+$app->post('/auth/register', [$authController, 'register']);
+$app->post('/auth/refresh', [$authController, 'refresh']);
+
+// Protected routes group
+$app->group('/api', function ($group) use ($authController) {
+    // User profile
+    $group->get('/me', [$authController, 'me']);
+
+    // Admin-only routes
+    $group->group('/admin', function ($adminGroup) {
+        $adminGroup->get('/users', function (Request $request, Response $response) {
+            $response->getBody()->write(json_encode([
+                'message' => 'Admin users endpoint',
+                'user' => $request->getAttribute('user')->email,
+            ]));
+
+            return $response->withHeader('Content-Type', 'application/json');
+        });
+    })->add(new RoleMiddleware(['Admin']));
+
+})->add($authMiddleware);
 
 $app->run();
