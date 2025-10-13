@@ -87,7 +87,6 @@ $app->group('/api', function ($group) use ($authController) {
             return $response->withHeader('Content-Type', 'application/json');
         });
     })->add(new RoleMiddleware(['Admin']));
-
 })->add($authMiddleware);
 
 $app->run();
