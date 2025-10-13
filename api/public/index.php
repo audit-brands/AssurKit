@@ -7,6 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use AssurKit\Controllers\AuthController;
 use AssurKit\Controllers\CompanyController;
 use AssurKit\Controllers\ControlController;
+use AssurKit\Controllers\EvidenceController;
 use AssurKit\Controllers\ProcessController;
 use AssurKit\Controllers\RiskController;
 use AssurKit\Controllers\RiskControlMatrixController;
@@ -41,6 +42,7 @@ $riskController = new RiskController();
 $controlController = new ControlController();
 $riskControlMatrixController = new RiskControlMatrixController();
 $testController = new TestController();
+$evidenceController = new EvidenceController();
 $authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
@@ -88,7 +90,7 @@ $app->post('/auth/register', [$authController, 'register']);
 $app->post('/auth/refresh', [$authController, 'refresh']);
 
 // Protected routes group
-$app->group('/api', function ($group) use ($authController, $userController, $companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController) {
+$app->group('/api', function ($group) use ($authController, $userController, $companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController, $evidenceController) {
     // User profile
     $group->get('/me', [$authController, 'me']);
 
@@ -121,8 +123,13 @@ $app->group('/api', function ($group) use ($authController, $userController, $co
     $group->get('/tests/{id}', [$testController, 'show']);
     $group->get('/tests/dashboard', [$testController, 'getTestingDashboard']);
 
+    // Evidence - accessible by all authenticated users
+    $group->get('/evidence', [$evidenceController, 'index']);
+    $group->get('/evidence/{id}', [$evidenceController, 'show']);
+    $group->get('/evidence/{id}/download', [$evidenceController, 'download']);
+
     // Manager+ routes
-    $group->group('/manage', function ($manageGroup) use ($companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController) {
+    $group->group('/manage', function ($manageGroup) use ($companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController, $evidenceController) {
         // Company management
         $manageGroup->post('/companies', [$companyController, 'create']);
         $manageGroup->put('/companies/{id}', [$companyController, 'update']);
@@ -157,6 +164,11 @@ $app->group('/api', function ($group) use ($authController, $userController, $co
         $manageGroup->post('/tests', [$testController, 'create']);
         $manageGroup->put('/tests/{id}', [$testController, 'update']);
         $manageGroup->delete('/tests/{id}', [$testController, 'delete']);
+
+        // Evidence management
+        $manageGroup->post('/evidence/upload', [$evidenceController, 'upload']);
+        $manageGroup->put('/evidence/{id}/metadata', [$evidenceController, 'updateMetadata']);
+        $manageGroup->post('/evidence/{id}/archive', [$evidenceController, 'archive']);
     })->add(new RoleMiddleware(['Manager', 'Admin']));
 
     // Admin-only routes
