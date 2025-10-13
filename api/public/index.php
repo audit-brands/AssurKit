@@ -26,6 +26,7 @@ $app->addBodyParsingMiddleware();
 // CORS middleware
 $app->add(function (Request $request, \Psr\Http\Message\ResponseInterface $response, $next) {
     $response = $next($request, $response);
+
     return $response
         ->withHeader('Access-Control-Allow-Origin', '*')
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
@@ -37,16 +38,18 @@ $app->get('/', function (Request $request, Response $response) {
     $response->getBody()->write(json_encode([
         'name' => 'AssurKit API',
         'version' => '0.1.0',
-        'status' => 'healthy'
+        'status' => 'healthy',
     ]));
+
     return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->get('/health', function (Request $request, Response $response) {
     $response->getBody()->write(json_encode([
         'status' => 'healthy',
-        'timestamp' => date('Y-m-d H:i:s')
+        'timestamp' => date('Y-m-d H:i:s'),
     ]));
+
     return $response->withHeader('Content-Type', 'application/json');
 });
 
