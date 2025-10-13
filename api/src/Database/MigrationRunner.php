@@ -90,7 +90,7 @@ class MigrationRunner
 
         $db->table('migrations')->insert([
             'migration' => $migrationName,
-            'run_at' => now(),
+            'run_at' => date('Y-m-d H:i:s'),
         ]);
     }
 
