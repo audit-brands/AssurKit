@@ -8,11 +8,16 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use AssurKit\Database\Connection;
+
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 if (file_exists(dirname(__DIR__) . '/.env')) {
     $dotenv->load();
 }
+
+// Initialize database connection
+Connection::getInstance();
 
 // Create app
 $app = AppFactory::create();
