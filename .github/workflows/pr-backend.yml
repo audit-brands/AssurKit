@@ -1,0 +1,89 @@
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - 'api/**'
+      - '.github/workflows/pr-backend.yml'
+  push:
+    branches:
+      - development
+    paths:
+      - 'api/**'
+      - '.github/workflows/pr-backend.yml'
+
+jobs:
+  test:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: assurkit
+          POSTGRES_PASSWORD: assurkit_test
+          POSTGRES_DB: assurkit_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: xdebug
+          extensions: mbstring, pdo, pdo_pgsql, json
+          
+      - name: Validate composer.json
+        working-directory: api
+        run: composer validate --strict
+        
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+            
+      - name: Install dependencies
+        working-directory: api
+        run: composer install --prefer-dist --no-progress --no-interaction
+        
+      - name: Run PHP-CS-Fixer
+        working-directory: api
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+        
+      - name: Run Psalm static analysis
+        working-directory: api
+        run: vendor/bin/psalm --output-format=github --show-info=false
+        
+      - name: Run Pest tests
+        working-directory: api
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: assurkit_test
+          DB_USERNAME: assurkit
+          DB_PASSWORD: assurkit_test
+        run: vendor/bin/pest --ci --coverage-clover=coverage.xml
+        
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-coverage
+          path: api/coverage.xml
