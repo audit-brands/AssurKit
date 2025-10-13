@@ -11,6 +11,7 @@ use AssurKit\Controllers\ProcessController;
 use AssurKit\Controllers\RiskController;
 use AssurKit\Controllers\RiskControlMatrixController;
 use AssurKit\Controllers\SubprocessController;
+use AssurKit\Controllers\TestController;
 use AssurKit\Controllers\UserController;
 use AssurKit\Database\Connection;
 use AssurKit\Middleware\AuthMiddleware;
@@ -39,6 +40,7 @@ $subprocessController = new SubprocessController();
 $riskController = new RiskController();
 $controlController = new ControlController();
 $riskControlMatrixController = new RiskControlMatrixController();
+$testController = new TestController();
 $authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
@@ -86,7 +88,7 @@ $app->post('/auth/register', [$authController, 'register']);
 $app->post('/auth/refresh', [$authController, 'refresh']);
 
 // Protected routes group
-$app->group('/api', function ($group) use ($authController, $userController, $companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController) {
+$app->group('/api', function ($group) use ($authController, $userController, $companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController) {
     // User profile
     $group->get('/me', [$authController, 'me']);
 
@@ -114,8 +116,13 @@ $app->group('/api', function ($group) use ($authController, $userController, $co
     $group->get('/risk-control-matrix', [$riskControlMatrixController, 'index']);
     $group->get('/risk-control-matrix/effectiveness-report', [$riskControlMatrixController, 'getEffectivenessReport']);
 
+    // Tests - accessible by all authenticated users
+    $group->get('/tests', [$testController, 'index']);
+    $group->get('/tests/{id}', [$testController, 'show']);
+    $group->get('/tests/dashboard', [$testController, 'getTestingDashboard']);
+
     // Manager+ routes
-    $group->group('/manage', function ($manageGroup) use ($companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController) {
+    $group->group('/manage', function ($manageGroup) use ($companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController) {
         // Company management
         $manageGroup->post('/companies', [$companyController, 'create']);
         $manageGroup->put('/companies/{id}', [$companyController, 'update']);
@@ -145,6 +152,11 @@ $app->group('/api', function ($group) use ($authController, $userController, $co
         $manageGroup->post('/risk-control-matrix/assign', [$riskControlMatrixController, 'assignControl']);
         $manageGroup->put('/risk-control-matrix/update', [$riskControlMatrixController, 'updateAssignment']);
         $manageGroup->delete('/risk-control-matrix/remove', [$riskControlMatrixController, 'removeAssignment']);
+
+        // Test management
+        $manageGroup->post('/tests', [$testController, 'create']);
+        $manageGroup->put('/tests/{id}', [$testController, 'update']);
+        $manageGroup->delete('/tests/{id}', [$testController, 'delete']);
     })->add(new RoleMiddleware(['Manager', 'Admin']));
 
     // Admin-only routes

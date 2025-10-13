@@ -6,6 +6,7 @@ namespace AssurKit\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Control extends Model
 {
@@ -55,6 +56,16 @@ class Control extends Model
         return $this->belongsToMany(Risk::class, 'risk_control_matrix')
                     ->withPivot(['effectiveness', 'rationale', 'metadata'])
                     ->withTimestamps();
+    }
+
+    public function tests(): HasMany
+    {
+        return $this->hasMany(Test::class);
+    }
+
+    public function activeTests(): HasMany
+    {
+        return $this->tests()->whereIn('status', ['Planned', 'In Progress', 'Submitted', 'In Review']);
     }
 
     public static function generateControlId(): string
