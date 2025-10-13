@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Respect\Validation\Validator as v;
 
 class EvidenceController
 {

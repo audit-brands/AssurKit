@@ -177,6 +177,7 @@ class Test extends Model
         // Consider tests overdue if they've been in progress for more than 30 days
         if ($this->started_at) {
             $now = new \DateTime();
+
             return $this->started_at->diff($now)->days > 30;
         }
 
