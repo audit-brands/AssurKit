@@ -5,6 +5,8 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use AssurKit\Controllers\AuthController;
+use AssurKit\Controllers\CompanyController;
+use AssurKit\Controllers\UserController;
 use AssurKit\Database\Connection;
 use AssurKit\Middleware\AuthMiddleware;
 use AssurKit\Middleware\RoleMiddleware;
@@ -25,6 +27,8 @@ Connection::getInstance();
 // Initialize services
 $jwtService = new JwtService();
 $authController = new AuthController($jwtService);
+$userController = new UserController();
+$companyController = new CompanyController();
 $authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
@@ -72,20 +76,30 @@ $app->post('/auth/register', [$authController, 'register']);
 $app->post('/auth/refresh', [$authController, 'refresh']);
 
 // Protected routes group
-$app->group('/api', function ($group) use ($authController) {
+$app->group('/api', function ($group) use ($authController, $userController, $companyController) {
     // User profile
     $group->get('/me', [$authController, 'me']);
 
-    // Admin-only routes
-    $group->group('/admin', function ($adminGroup) {
-        $adminGroup->get('/users', function (Request $request, Response $response) {
-            $response->getBody()->write(json_encode([
-                'message' => 'Admin users endpoint',
-                'user' => $request->getAttribute('user')->email,
-            ]));
+    // Companies - accessible by all authenticated users
+    $group->get('/companies', [$companyController, 'index']);
+    $group->get('/companies/{id}', [$companyController, 'show']);
 
-            return $response->withHeader('Content-Type', 'application/json');
-        });
+    // Manager+ routes
+    $group->group('/manage', function ($manageGroup) use ($companyController) {
+        // Company management
+        $manageGroup->post('/companies', [$companyController, 'create']);
+        $manageGroup->put('/companies/{id}', [$companyController, 'update']);
+        $manageGroup->delete('/companies/{id}', [$companyController, 'delete']);
+    })->add(new RoleMiddleware(['Manager', 'Admin']));
+
+    // Admin-only routes
+    $group->group('/admin', function ($adminGroup) use ($userController) {
+        // User management
+        $adminGroup->get('/users', [$userController, 'index']);
+        $adminGroup->get('/users/{id}', [$userController, 'show']);
+        $adminGroup->post('/users', [$userController, 'create']);
+        $adminGroup->put('/users/{id}', [$userController, 'update']);
+        $adminGroup->delete('/users/{id}', [$userController, 'delete']);
     })->add(new RoleMiddleware(['Admin']));
 })->add($authMiddleware);
 
