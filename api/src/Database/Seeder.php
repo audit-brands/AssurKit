@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AssurKit\Database;
 
+use AssurKit\Database\Seeds\CompanySeeder;
 use AssurKit\Models\Role;
 use AssurKit\Models\User;
 
@@ -20,6 +21,7 @@ class Seeder
 
         $this->seedRoles();
         $this->seedDefaultAdmin();
+        $this->seedCompanyData();
 
         echo "Database seeding completed!\n";
     }
@@ -54,5 +56,13 @@ class Seeder
         } else {
             echo "Admin user already exists: {$adminEmail}\n";
         }
+    }
+
+    private function seedCompanyData(): void
+    {
+        echo "Seeding company data...\n";
+
+        $companySeeder = new CompanySeeder();
+        $companySeeder->run();
     }
 }

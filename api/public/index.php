@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
+require __DIR__ . '/../vendor/autoload.php';
+
+use AssurKit\Controllers\AuthController;
+use AssurKit\Controllers\CompanyController;
+use AssurKit\Controllers\UserController;
+use AssurKit\Database\Connection;
+use AssurKit\Middleware\AuthMiddleware;
+use AssurKit\Middleware\RoleMiddleware;
+use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
-
-require __DIR__ . '/../vendor/autoload.php';
-
-use AssurKit\Database\Connection;
 
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
@@ -18,6 +23,13 @@ if (file_exists(dirname(__DIR__) . '/.env')) {
 
 // Initialize database connection
 Connection::getInstance();
+
+// Initialize services
+$jwtService = new JwtService();
+$authController = new AuthController($jwtService);
+$userController = new UserController();
+$companyController = new CompanyController();
+$authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
 $app = AppFactory::create();
@@ -57,5 +69,38 @@ $app->get('/health', function (Request $request, Response $response) {
 
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+// Authentication routes (public)
+$app->post('/auth/login', [$authController, 'login']);
+$app->post('/auth/register', [$authController, 'register']);
+$app->post('/auth/refresh', [$authController, 'refresh']);
+
+// Protected routes group
+$app->group('/api', function ($group) use ($authController, $userController, $companyController) {
+    // User profile
+    $group->get('/me', [$authController, 'me']);
+
+    // Companies - accessible by all authenticated users
+    $group->get('/companies', [$companyController, 'index']);
+    $group->get('/companies/{id}', [$companyController, 'show']);
+
+    // Manager+ routes
+    $group->group('/manage', function ($manageGroup) use ($companyController) {
+        // Company management
+        $manageGroup->post('/companies', [$companyController, 'create']);
+        $manageGroup->put('/companies/{id}', [$companyController, 'update']);
+        $manageGroup->delete('/companies/{id}', [$companyController, 'delete']);
+    })->add(new RoleMiddleware(['Manager', 'Admin']));
+
+    // Admin-only routes
+    $group->group('/admin', function ($adminGroup) use ($userController) {
+        // User management
+        $adminGroup->get('/users', [$userController, 'index']);
+        $adminGroup->get('/users/{id}', [$userController, 'show']);
+        $adminGroup->post('/users', [$userController, 'create']);
+        $adminGroup->put('/users/{id}', [$userController, 'update']);
+        $adminGroup->delete('/users/{id}', [$userController, 'delete']);
+    })->add(new RoleMiddleware(['Admin']));
+})->add($authMiddleware);
 
 $app->run();
