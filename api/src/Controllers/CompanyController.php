@@ -15,8 +15,8 @@ class CompanyController
     {
         $queryParams = $request->getQueryParams();
 
-        $page = max(1, (int)($queryParams['page'] ?? 1));
-        $limit = min(100, max(10, (int)($queryParams['limit'] ?? 20)));
+        $page = max(1, (int) ($queryParams['page'] ?? 1));
+        $limit = min(100, max(10, (int) ($queryParams['limit'] ?? 20)));
         $search = $queryParams['search'] ?? '';
         $active = $queryParams['active'] ?? '';
 
@@ -34,7 +34,7 @@ class CompanyController
         }
 
         if ($active !== '') {
-            $query->where('is_active', (bool)$active);
+            $query->where('is_active', (bool) $active);
         }
 
         $total = $query->count();
@@ -184,7 +184,7 @@ class CompanyController
         }
 
         if (isset($data['is_active'])) {
-            $company->is_active = (bool)$data['is_active'];
+            $company->is_active = (bool) $data['is_active'];
         }
 
         $company->save();

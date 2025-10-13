@@ -16,8 +16,8 @@ class UserController
     {
         $queryParams = $request->getQueryParams();
 
-        $page = max(1, (int)($queryParams['page'] ?? 1));
-        $limit = min(100, max(10, (int)($queryParams['limit'] ?? 20)));
+        $page = max(1, (int) ($queryParams['page'] ?? 1));
+        $limit = min(100, max(10, (int) ($queryParams['limit'] ?? 20)));
         $search = $queryParams['search'] ?? '';
         $role = $queryParams['role'] ?? '';
 
@@ -240,7 +240,7 @@ class UserController
             } else {
                 $validRoles = Role::pluck('name')->toArray();
                 foreach ($data['roles'] as $role) {
-                    if (!in_array($role, $validRoles)) {
+                    if (!in_array($role, $validRoles, true)) {
                         $errors[] = "Invalid role: {$role}";
                     }
                 }
