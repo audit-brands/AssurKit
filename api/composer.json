@@ -1,0 +1,55 @@
+{
+    "name": "assurkit/api",
+    "description": "AssurKit API - SOX-first GRC platform",
+    "type": "project",
+    "license": "AGPL-3.0-or-later",
+    "require": {
+        "php": ">=8.2",
+        "slim/slim": "^4.12",
+        "slim/psr7": "^1.6",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.0",
+        "monolog/monolog": "^3.6",
+        "vlucas/phpdotenv": "^5.6",
+        "respect/validation": "^2.2",
+        "firebase/php-jwt": "^6.10",
+        "illuminate/database": "^11.0",
+        "ramsey/uuid": "^4.7"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.34",
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "vimeo/psalm": "^5.25",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "AssurKit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AssurKit\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest --ci",
+        "test:coverage": "pest --ci --coverage-clover=coverage.xml",
+        "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "cs:fix": "php-cs-fixer fix",
+        "psalm": "psalm --output-format=github --show-info=false",
+        "check": [
+            "@cs:check",
+            "@psalm",
+            "@test"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

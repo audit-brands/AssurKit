@@ -1,0 +1,19 @@
+# Code Owners for AssurKit
+# These owners will be requested for review when someone opens a pull request
+
+# Global owners
+* @audit-brands/assurkit-maintainers
+
+# Frontend
+/frontend/ @audit-brands/frontend
+
+# Backend
+/api/ @audit-brands/backend
+
+# Infrastructure
+/infra/ @audit-brands/devops
+/.github/ @audit-brands/devops
+
+# Documentation
+/docs/ @audit-brands/documentation
+*.md @audit-brands/documentation

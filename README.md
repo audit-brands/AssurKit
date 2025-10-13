@@ -36,6 +36,59 @@ docker-compose up
 # API: http://localhost:8080
 ```
 
+#### First-Time Setup
+
+When you run `docker-compose up` for the first time, the system will automatically:
+
+1. **Initialize the PostgreSQL database** with the required schema
+2. **Run database migrations** to create all tables (users, roles, user_roles, etc.)
+3. **Seed default data** including:
+   - Default roles: Admin, Manager, Tester, Viewer
+   - Default admin user account
+
+#### Default Admin Account
+
+After the initial setup, you can log in with:
+- **Email**: `admin@assurkit.local`
+- **Password**: `admin123`
+- **Role**: Admin (full system access)
+
+**⚠️ IMPORTANT**: Change the default admin credentials immediately after first login!
+
+#### Customizing Default Settings
+
+You can customize the default admin account by setting environment variables before starting:
+
+```bash
+# Create a .env file in the api directory
+cp api/.env.example api/.env
+
+# Edit the .env file with your preferred admin credentials:
+ADMIN_EMAIL=your-admin@company.com
+ADMIN_PASSWORD=your-secure-password
+
+# Then start the services
+docker-compose up
+```
+
+#### Database Management Commands
+
+If you need to manage the database manually:
+
+```bash
+# Run migrations manually
+docker-compose exec api php migrate.php migrate
+
+# Seed data manually
+docker-compose exec api php seed.php
+
+# Rollback migrations (⚠️ This will delete all data)
+docker-compose exec api php migrate.php rollback
+
+# Access PostgreSQL directly
+docker-compose exec postgres psql -U assurkit -d assurkit
+```
+
 ### Local Development
 
 #### Frontend
