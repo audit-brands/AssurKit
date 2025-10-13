@@ -7,11 +7,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <div className="min-h-screen bg-background">
-          <h1 className="text-4xl font-bold text-center py-8">
+        <div className="min-h-screen bg-white">
+          <h1 className="text-4xl font-bold text-center py-8 text-gray-900">
             AssurKit
           </h1>
-          <p className="text-center text-muted-foreground">
+          <p className="text-center text-gray-600">
             SOX-first open-source GRC platform
           </p>
         </div>
