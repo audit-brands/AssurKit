@@ -24,14 +24,14 @@ class UserController
         $query = User::with('roles');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'ILIKE', "%{$search}%")
                   ->orWhere('email', 'ILIKE', "%{$search}%");
             });
         }
 
         if ($role) {
-            $query->whereHas('roles', function ($q) use ($role) {
+            $query->whereHas('roles', function ($q) use ($role): void {
                 $q->where('name', $role);
             });
         }
@@ -43,7 +43,7 @@ class UserController
                       ->get();
 
         $responseData = [
-            'data' => $users->map(function ($user) {
+            'data' => $users->map(function ($user): array {
                 return [
                     'id' => $user->id,
                     'email' => $user->email,

@@ -20,14 +20,14 @@ class CompanyController
         $search = $queryParams['search'] ?? '';
         $active = $queryParams['active'] ?? '';
 
-        $query = Company::with(['processes' => function ($q) {
-            $q->where('is_active', true)->with(['subprocesses' => function ($sq) {
+        $query = Company::with(['processes' => function ($q): void {
+            $q->where('is_active', true)->with(['subprocesses' => function ($sq): void {
                 $sq->where('is_active', true);
             }]);
         }]);
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'ILIKE', "%{$search}%")
                   ->orWhere('ticker_symbol', 'ILIKE', "%{$search}%");
             });
@@ -44,7 +44,7 @@ class CompanyController
                           ->get();
 
         $responseData = [
-            'data' => $companies->map(function ($company) {
+            'data' => $companies->map(function ($company): array {
                 return [
                     'id' => $company->id,
                     'name' => $company->name,
@@ -53,7 +53,7 @@ class CompanyController
                     'industry' => $company->industry,
                     'is_active' => $company->is_active,
                     'processes_count' => $company->processes->count(),
-                    'subprocesses_count' => $company->processes->sum(function ($process) {
+                    'subprocesses_count' => $company->processes->sum(function ($process): int {
                         return $process->subprocesses->count();
                     }),
                     'created_at' => $company->created_at->toISOString(),
@@ -87,14 +87,14 @@ class CompanyController
             'industry' => $company->industry,
             'metadata' => $company->metadata,
             'is_active' => $company->is_active,
-            'processes' => $company->processes->map(function ($process) {
+            'processes' => $company->processes->map(function ($process): array {
                 return [
                     'id' => $process->id,
                     'name' => $process->name,
                     'description' => $process->description,
                     'owner_email' => $process->owner_email,
                     'is_active' => $process->is_active,
-                    'subprocesses' => $process->subprocesses->map(function ($subprocess) {
+                    'subprocesses' => $process->subprocesses->map(function ($subprocess): array {
                         return [
                             'id' => $subprocess->id,
                             'name' => $subprocess->name,
