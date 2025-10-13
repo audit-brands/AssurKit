@@ -6,6 +6,13 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use AssurKit\Controllers\AuthController;
 use AssurKit\Controllers\CompanyController;
+use AssurKit\Controllers\ControlController;
+use AssurKit\Controllers\EvidenceController;
+use AssurKit\Controllers\ProcessController;
+use AssurKit\Controllers\RiskController;
+use AssurKit\Controllers\RiskControlMatrixController;
+use AssurKit\Controllers\SubprocessController;
+use AssurKit\Controllers\TestController;
 use AssurKit\Controllers\UserController;
 use AssurKit\Database\Connection;
 use AssurKit\Middleware\AuthMiddleware;
@@ -29,6 +36,13 @@ $jwtService = new JwtService();
 $authController = new AuthController($jwtService);
 $userController = new UserController();
 $companyController = new CompanyController();
+$processController = new ProcessController();
+$subprocessController = new SubprocessController();
+$riskController = new RiskController();
+$controlController = new ControlController();
+$riskControlMatrixController = new RiskControlMatrixController();
+$testController = new TestController();
+$evidenceController = new EvidenceController();
 $authMiddleware = new AuthMiddleware($jwtService);
 
 // Create app
@@ -76,7 +90,7 @@ $app->post('/auth/register', [$authController, 'register']);
 $app->post('/auth/refresh', [$authController, 'refresh']);
 
 // Protected routes group
-$app->group('/api', function ($group) use ($authController, $userController, $companyController) {
+$app->group('/api', function ($group) use ($authController, $userController, $companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController, $evidenceController) {
     // User profile
     $group->get('/me', [$authController, 'me']);
 
@@ -84,12 +98,77 @@ $app->group('/api', function ($group) use ($authController, $userController, $co
     $group->get('/companies', [$companyController, 'index']);
     $group->get('/companies/{id}', [$companyController, 'show']);
 
+    // Processes - accessible by all authenticated users
+    $group->get('/processes', [$processController, 'index']);
+    $group->get('/processes/{id}', [$processController, 'show']);
+
+    // Subprocesses - accessible by all authenticated users
+    $group->get('/subprocesses', [$subprocessController, 'index']);
+    $group->get('/subprocesses/{id}', [$subprocessController, 'show']);
+
+    // Risks - accessible by all authenticated users
+    $group->get('/risks', [$riskController, 'index']);
+    $group->get('/risks/{id}', [$riskController, 'show']);
+
+    // Controls - accessible by all authenticated users
+    $group->get('/controls', [$controlController, 'index']);
+    $group->get('/controls/{id}', [$controlController, 'show']);
+
+    // Risk-Control Matrix - accessible by all authenticated users
+    $group->get('/risk-control-matrix', [$riskControlMatrixController, 'index']);
+    $group->get('/risk-control-matrix/effectiveness-report', [$riskControlMatrixController, 'getEffectivenessReport']);
+
+    // Tests - accessible by all authenticated users
+    $group->get('/tests', [$testController, 'index']);
+    $group->get('/tests/{id}', [$testController, 'show']);
+    $group->get('/tests/dashboard', [$testController, 'getTestingDashboard']);
+
+    // Evidence - accessible by all authenticated users
+    $group->get('/evidence', [$evidenceController, 'index']);
+    $group->get('/evidence/{id}', [$evidenceController, 'show']);
+    $group->get('/evidence/{id}/download', [$evidenceController, 'download']);
+
     // Manager+ routes
-    $group->group('/manage', function ($manageGroup) use ($companyController) {
+    $group->group('/manage', function ($manageGroup) use ($companyController, $processController, $subprocessController, $riskController, $controlController, $riskControlMatrixController, $testController, $evidenceController) {
         // Company management
         $manageGroup->post('/companies', [$companyController, 'create']);
         $manageGroup->put('/companies/{id}', [$companyController, 'update']);
         $manageGroup->delete('/companies/{id}', [$companyController, 'delete']);
+
+        // Process management
+        $manageGroup->post('/processes', [$processController, 'create']);
+        $manageGroup->put('/processes/{id}', [$processController, 'update']);
+        $manageGroup->delete('/processes/{id}', [$processController, 'delete']);
+
+        // Subprocess management
+        $manageGroup->post('/subprocesses', [$subprocessController, 'create']);
+        $manageGroup->put('/subprocesses/{id}', [$subprocessController, 'update']);
+        $manageGroup->delete('/subprocesses/{id}', [$subprocessController, 'delete']);
+
+        // Risk management
+        $manageGroup->post('/risks', [$riskController, 'create']);
+        $manageGroup->put('/risks/{id}', [$riskController, 'update']);
+        $manageGroup->delete('/risks/{id}', [$riskController, 'delete']);
+
+        // Control management
+        $manageGroup->post('/controls', [$controlController, 'create']);
+        $manageGroup->put('/controls/{id}', [$controlController, 'update']);
+        $manageGroup->delete('/controls/{id}', [$controlController, 'delete']);
+
+        // Risk-Control Matrix management
+        $manageGroup->post('/risk-control-matrix/assign', [$riskControlMatrixController, 'assignControl']);
+        $manageGroup->put('/risk-control-matrix/update', [$riskControlMatrixController, 'updateAssignment']);
+        $manageGroup->delete('/risk-control-matrix/remove', [$riskControlMatrixController, 'removeAssignment']);
+
+        // Test management
+        $manageGroup->post('/tests', [$testController, 'create']);
+        $manageGroup->put('/tests/{id}', [$testController, 'update']);
+        $manageGroup->delete('/tests/{id}', [$testController, 'delete']);
+
+        // Evidence management
+        $manageGroup->post('/evidence/upload', [$evidenceController, 'upload']);
+        $manageGroup->put('/evidence/{id}/metadata', [$evidenceController, 'updateMetadata']);
+        $manageGroup->post('/evidence/{id}/archive', [$evidenceController, 'archive']);
     })->add(new RoleMiddleware(['Manager', 'Admin']));
 
     // Admin-only routes
