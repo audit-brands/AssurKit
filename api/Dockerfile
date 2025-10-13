@@ -33,9 +33,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN a2enmod rewrite
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
