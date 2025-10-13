@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AssurKit\Controllers;
 
 use AssurKit\Models\Company;
+use Illuminate\Database\Eloquent\Builder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator as v;
@@ -27,7 +28,7 @@ class CompanyController
         }]);
 
         if ($search) {
-            $query->where(function ($q) use ($search): void {
+            $query->where(function (Builder $q) use ($search): void {
                 $q->where('name', 'ILIKE', "%{$search}%")
                   ->orWhere('ticker_symbol', 'ILIKE', "%{$search}%");
             });
@@ -43,22 +44,26 @@ class CompanyController
                           ->orderBy('name')
                           ->get();
 
+        /** @var array<array{id: string, name: string, description: string|null, ticker_symbol: string|null, industry: string|null, is_active: bool, processes_count: int, subprocesses_count: int, created_at: string}> $data */
+        $data = [];
+        foreach ($companies as $company) {
+            $data[] = [
+                'id' => $company->id,
+                'name' => $company->name,
+                'description' => $company->description,
+                'ticker_symbol' => $company->ticker_symbol,
+                'industry' => $company->industry,
+                'is_active' => $company->is_active,
+                'processes_count' => $company->processes->count(),
+                'subprocesses_count' => $company->processes->sum(function ($process): int {
+                    return $process->subprocesses->count();
+                }),
+                'created_at' => $company->created_at->toISOString(),
+            ];
+        }
+
         $responseData = [
-            'data' => $companies->map(function ($company): array {
-                return [
-                    'id' => $company->id,
-                    'name' => $company->name,
-                    'description' => $company->description,
-                    'ticker_symbol' => $company->ticker_symbol,
-                    'industry' => $company->industry,
-                    'is_active' => $company->is_active,
-                    'processes_count' => $company->processes->count(),
-                    'subprocesses_count' => $company->processes->sum(function ($process): int {
-                        return $process->subprocesses->count();
-                    }),
-                    'created_at' => $company->created_at->toISOString(),
-                ];
-            }),
+            'data' => $data,
             'pagination' => [
                 'page' => $page,
                 'limit' => $limit,

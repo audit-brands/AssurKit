@@ -6,6 +6,7 @@ namespace AssurKit\Controllers;
 
 use AssurKit\Models\Role;
 use AssurKit\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator as v;
@@ -24,14 +25,14 @@ class UserController
         $query = User::with('roles');
 
         if ($search) {
-            $query->where(function ($q) use ($search): void {
+            $query->where(function (Builder $q) use ($search): void {
                 $q->where('name', 'ILIKE', "%{$search}%")
                   ->orWhere('email', 'ILIKE', "%{$search}%");
             });
         }
 
         if ($role) {
-            $query->whereHas('roles', function ($q) use ($role): void {
+            $query->whereHas('roles', function (Builder $q) use ($role): void {
                 $q->where('name', $role);
             });
         }
@@ -42,17 +43,21 @@ class UserController
                       ->orderBy('created_at', 'desc')
                       ->get();
 
+        /** @var array<array{id: string, email: string, name: string, roles: array<string>, created_at: string, updated_at: string}> $data */
+        $data = [];
+        foreach ($users as $user) {
+            $data[] = [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'roles' => $user->roles->pluck('name')->toArray(),
+                'created_at' => $user->created_at->toISOString(),
+                'updated_at' => $user->updated_at->toISOString(),
+            ];
+        }
+
         $responseData = [
-            'data' => $users->map(function ($user): array {
-                return [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'roles' => $user->roles->pluck('name')->toArray(),
-                    'created_at' => $user->created_at->toISOString(),
-                    'updated_at' => $user->updated_at->toISOString(),
-                ];
-            }),
+            'data' => $data,
             'pagination' => [
                 'page' => $page,
                 'limit' => $limit,
