@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AssurKit\Controllers;
 
+use AssurKit\Models\User;
+use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use AssurKit\Services\JwtService;
-use AssurKit\Models\User;
 use Respect\Validation\Validator as v;
 
 class AuthController

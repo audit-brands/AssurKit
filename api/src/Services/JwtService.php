@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AssurKit\Services;
 
+use AssurKit\Models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use AssurKit\Models\User;
 
 class JwtService
 {

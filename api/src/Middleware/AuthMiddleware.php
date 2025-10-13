@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace AssurKit\Middleware;
 
+use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use AssurKit\Services\JwtService;
 
 class AuthMiddleware implements MiddlewareInterface
 {

@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
+require __DIR__ . '/../vendor/autoload.php';
+
+use AssurKit\Controllers\AuthController;
+use AssurKit\Database\Connection;
+use AssurKit\Middleware\AuthMiddleware;
+use AssurKit\Middleware\RoleMiddleware;
+use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
-
-require __DIR__ . '/../vendor/autoload.php';
-
-use AssurKit\Database\Connection;
-use AssurKit\Services\JwtService;
-use AssurKit\Controllers\AuthController;
-use AssurKit\Middleware\AuthMiddleware;
-use AssurKit\Middleware\RoleMiddleware;
 
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
