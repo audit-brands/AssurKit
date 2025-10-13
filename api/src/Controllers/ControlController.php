@@ -235,7 +235,7 @@ class ControlController
 
         $updateFields = [
             'name', 'description', 'control_type', 'frequency', 'automation_level',
-            'owner_email', 'reviewer_email', 'evidence_requirements', 'metadata', 'status'
+            'owner_email', 'reviewer_email', 'evidence_requirements', 'metadata', 'status',
         ];
 
         foreach ($updateFields as $field) {
