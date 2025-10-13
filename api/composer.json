@@ -15,10 +15,11 @@
         "firebase/php-jwt": "^6.10"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0",
+        "pestphp/pest": "^2.34",
         "friendsofphp/php-cs-fixer": "^3.64",
-        "vimeo/psalm": "^5.26",
-        "mockery/mockery": "^1.6"
+        "vimeo/psalm": "^5.25",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^10.5"
     },
     "autoload": {
         "psr-4": {
