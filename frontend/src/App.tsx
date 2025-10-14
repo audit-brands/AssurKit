@@ -5,6 +5,10 @@ import { MainLayout } from '@/components/layout/main-layout'
 import { LoginPage } from '@/pages/auth/login'
 import { DashboardPage } from '@/pages/dashboard'
 import { CompaniesPage } from '@/pages/companies'
+import { ProcessesPage } from '@/pages/processes'
+import { SubprocessesPage } from '@/pages/subprocesses'
+import { RisksPage } from '@/pages/risks'
+import { ControlsPage } from '@/pages/controls'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEffect } from 'react'
 
@@ -28,9 +32,10 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/companies" element={<CompaniesPage />} />
-              <Route path="/processes" element={<div>Processes Page (Coming Soon)</div>} />
-              <Route path="/risks" element={<div>Risks Page (Coming Soon)</div>} />
-              <Route path="/controls" element={<div>Controls Page (Coming Soon)</div>} />
+              <Route path="/processes" element={<ProcessesPage />} />
+              <Route path="/subprocesses" element={<SubprocessesPage />} />
+              <Route path="/risks" element={<RisksPage />} />
+              <Route path="/controls" element={<ControlsPage />} />
               <Route path="/tests" element={<div>Tests Page (Coming Soon)</div>} />
               <Route path="/evidence" element={<div>Evidence Page (Coming Soon)</div>} />
 
