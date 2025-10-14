@@ -12,7 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - assurkit-network
     healthcheck:
@@ -23,13 +23,13 @@ services:
 
   api:
     build:
-      context: ./api
+      context: ../api
       dockerfile: Dockerfile
     container_name: assurkit-api
     ports:
       - "8080:80"
     volumes:
-      - ./api:/var/www/html
+      - ../api:/var/www/html
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -44,7 +44,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ../frontend
       dockerfile: Dockerfile
     container_name: assurkit-frontend
     ports:

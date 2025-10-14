@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import {
   Building2,
   Network,
+  GitBranch,
   Shield,
   AlertTriangle,
   ClipboardCheck,
@@ -18,6 +19,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Companies', href: '/companies', icon: Building2, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Processes', href: '/processes', icon: Network, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
+  { name: 'Subprocesses', href: '/subprocesses', icon: GitBranch, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Risks', href: '/risks', icon: AlertTriangle, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Controls', href: '/controls', icon: Shield, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Tests', href: '/tests', icon: ClipboardCheck, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
