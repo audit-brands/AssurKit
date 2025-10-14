@@ -54,9 +54,11 @@ class Evidence extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $i = 0;
 
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        while ($bytes > 1024 && $i < count($units) - 1) {
             $bytes /= 1024;
+            $i++;
         }
 
         return round($bytes, 2) . ' ' . $units[$i];
