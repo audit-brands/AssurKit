@@ -33,7 +33,7 @@ export function LoginPage() {
     try {
       await login(data.email, data.password)
       navigate('/dashboard')
-    } catch (err) {
+    } catch {
       // Error is handled in the store
     } finally {
       setIsLoading(false)

@@ -42,9 +42,12 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed'
+        : 'Login failed'
       set({
-        error: error.response?.data?.message || 'Login failed',
+        error: message,
         isLoading: false
       })
       throw error
@@ -68,9 +71,12 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Registration failed'
+        : 'Registration failed'
       set({
-        error: error.response?.data?.message || 'Registration failed',
+        error: message,
         isLoading: false
       })
       throw error
@@ -100,7 +106,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
         isLoading: false
       })
-    } catch (error) {
+    } catch {
       apiClient.clearTokens()
       set({
         user: null,
