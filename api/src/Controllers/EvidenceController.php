@@ -377,14 +377,14 @@ class EvidenceController
     private function formatBytes(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $i = 0;
 
-        while ($bytes > 1024 && $i < count($units) - 1) {
+        $unitIndex = 0;
+        while ($bytes >= 1024 && $unitIndex < 4) {
             $bytes /= 1024;
-            $i++;
+            $unitIndex++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2) . ' ' . $units[$unitIndex];
     }
 
     private function jsonResponse(ResponseInterface $response, array $data, int $status = 200): ResponseInterface

@@ -54,14 +54,14 @@ class Evidence extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $i = 0;
 
-        while ($bytes > 1024 && $i < count($units) - 1) {
+        $unitIndex = 0;
+        while ($bytes >= 1024 && $unitIndex < 4) {
             $bytes /= 1024;
-            $i++;
+            $unitIndex++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2) . ' ' . $units[$unitIndex];
     }
 
     public function getIsImageAttribute(): bool
