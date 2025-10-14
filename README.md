@@ -29,7 +29,7 @@ git clone https://github.com/yourusername/AssurKit.git
 cd AssurKit
 
 # Start all services
-docker-compose up
+cd infra && docker-compose up
 
 # Access the application
 # Frontend: http://localhost:3000
@@ -38,7 +38,7 @@ docker-compose up
 
 #### First-Time Setup
 
-When you run `docker-compose up` for the first time, the system will automatically:
+When you run `docker-compose up` from the `infra/` directory for the first time, the system will automatically:
 
 1. **Initialize the PostgreSQL database** with the required schema
 2. **Run database migrations** to create all tables (users, roles, user_roles, etc.)
@@ -68,7 +68,7 @@ ADMIN_EMAIL=your-admin@company.com
 ADMIN_PASSWORD=your-secure-password
 
 # Then start the services
-docker-compose up
+cd infra && docker-compose up
 ```
 
 #### Database Management Commands
@@ -77,16 +77,16 @@ If you need to manage the database manually:
 
 ```bash
 # Run migrations manually
-docker-compose exec api php migrate.php migrate
+cd infra && docker-compose exec api php migrate.php migrate
 
 # Seed data manually
-docker-compose exec api php seed.php
+cd infra && docker-compose exec api php seed.php
 
 # Rollback migrations (⚠️ This will delete all data)
-docker-compose exec api php migrate.php rollback
+cd infra && docker-compose exec api php migrate.php rollback
 
 # Access PostgreSQL directly
-docker-compose exec postgres psql -U assurkit -d assurkit
+cd infra && docker-compose exec postgres psql -U assurkit -d assurkit
 ```
 
 ### Local Development
