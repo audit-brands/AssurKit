@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/auth/protected-route'
 import { MainLayout } from '@/components/layout/main-layout'
 import { LoginPage } from '@/pages/auth/login'
 import { DashboardPage } from '@/pages/dashboard'
+import { CompaniesPage } from '@/pages/companies'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEffect } from 'react'
 
@@ -26,7 +27,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/companies" element={<div>Companies Page (Coming Soon)</div>} />
+              <Route path="/companies" element={<CompaniesPage />} />
               <Route path="/processes" element={<div>Processes Page (Coming Soon)</div>} />
               <Route path="/risks" element={<div>Risks Page (Coming Soon)</div>} />
               <Route path="/controls" element={<div>Controls Page (Coming Soon)</div>} />
