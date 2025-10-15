@@ -9,6 +9,8 @@ import { ProcessesPage } from '@/pages/processes'
 import { SubprocessesPage } from '@/pages/subprocesses'
 import { RisksPage } from '@/pages/risks'
 import { ControlsPage } from '@/pages/controls'
+import { RCMPage } from '@/pages/rcm'
+import { TestsPage } from '@/pages/tests'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEffect } from 'react'
 
@@ -36,7 +38,8 @@ function App() {
               <Route path="/subprocesses" element={<SubprocessesPage />} />
               <Route path="/risks" element={<RisksPage />} />
               <Route path="/controls" element={<ControlsPage />} />
-              <Route path="/tests" element={<div>Tests Page (Coming Soon)</div>} />
+              <Route path="/rcm" element={<RCMPage />} />
+              <Route path="/tests" element={<TestsPage />} />
               <Route path="/evidence" element={<div>Evidence Page (Coming Soon)</div>} />
 
               {/* Admin only */}
