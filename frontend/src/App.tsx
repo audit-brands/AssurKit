@@ -11,6 +11,8 @@ import { RisksPage } from '@/pages/risks'
 import { ControlsPage } from '@/pages/controls'
 import { RCMPage } from '@/pages/rcm'
 import { TestsPage } from '@/pages/tests'
+import { EvidencePage } from '@/pages/evidence'
+import { IssuesPage } from '@/pages/issues'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEffect } from 'react'
 
@@ -40,7 +42,8 @@ function App() {
               <Route path="/controls" element={<ControlsPage />} />
               <Route path="/rcm" element={<RCMPage />} />
               <Route path="/tests" element={<TestsPage />} />
-              <Route path="/evidence" element={<div>Evidence Page (Coming Soon)</div>} />
+              <Route path="/evidence" element={<EvidencePage />} />
+              <Route path="/issues" element={<IssuesPage />} />
 
               {/* Admin only */}
               <Route
