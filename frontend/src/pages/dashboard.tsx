@@ -1,100 +1,230 @@
+import { useState } from 'react'
+import { type DashboardFilters } from '@/hooks/use-dashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertTriangle, Shield, ClipboardCheck, FileCheck } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { ExecutiveOverview } from '@/components/dashboard/executive-overview'
+import { ComplianceHealthCheck } from '@/components/dashboard/compliance-health-check'
+import { AuditReadinessReport } from '@/components/dashboard/audit-readiness-report'
+import { DashboardFilters as DashboardFiltersComponent } from '@/components/dashboard/dashboard-filters'
+import {
+  BarChart3,
+  Shield,
+  ClipboardCheck,
+  Download,
+  RefreshCw,
+  TrendingUp,
+  AlertTriangle,
+  Target
+} from 'lucide-react'
 
 export function DashboardPage() {
+  const [filters, setFilters] = useState<DashboardFilters>({
+    period: 'current'
+  })
+
+  const [lastRefresh, setLastRefresh] = useState(new Date())
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    // Simulate refresh delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setLastRefresh(new Date())
+    setIsRefreshing(false)
+  }
+
+  const handleExport = () => {
+    // TODO: Implement export functionality
+    console.log('Export dashboard data with filters:', filters)
+  }
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome to AssurKit - Your SOX Compliance Platform</p>
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Executive Dashboard</h1>
+          <p className="text-muted-foreground">
+            Comprehensive view of SOX compliance status and metrics
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">
+            Last updated: {lastRefresh.toLocaleTimeString()}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Risks</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <CardDescription>No risks identified</CardDescription>
-          </CardContent>
-        </Card>
+      {/* Filters */}
+      <DashboardFiltersComponent
+        filters={filters}
+        onFiltersChange={setFilters}
+      />
 
+      {/* Key Metrics Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Controls</CardTitle>
-            <Shield className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <CardDescription>No controls configured</CardDescription>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Tests</CardTitle>
-            <ClipboardCheck className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <CardDescription>All tests complete</CardDescription>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Evidence Files</CardTitle>
-            <FileCheck className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <CardDescription>No evidence uploaded</CardDescription>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
-            <CardDescription>Complete these steps to set up your SOX compliance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-                <span className="text-sm">Create your company profile</span>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Compliance Health</p>
+                <p className="text-2xl font-bold text-green-600">Good</p>
+                <p className="text-xs text-muted-foreground">
+                  87% overall score
+                </p>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-                <span className="text-sm">Define business processes</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-                <span className="text-sm">Identify risks and controls</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-                <span className="text-sm">Schedule and execute tests</span>
-              </div>
+              <Shield className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest updates in your compliance program</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center py-8 text-sm text-gray-500">
-              No recent activity
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Test Completion</p>
+                <p className="text-2xl font-bold text-blue-600">92%</p>
+                <p className="text-xs text-muted-foreground">
+                  On track for period
+                </p>
+              </div>
+              <Target className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Audit Readiness</p>
+                <p className="text-2xl font-bold text-orange-600">78%</p>
+                <p className="text-xs text-muted-foreground">
+                  Preparation needed
+                </p>
+              </div>
+              <ClipboardCheck className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Main Dashboard Content */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Executive Overview
+          </TabsTrigger>
+          <TabsTrigger value="health-check" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Health Check
+          </TabsTrigger>
+          <TabsTrigger value="audit-readiness" className="flex items-center gap-2">
+            <ClipboardCheck className="h-4 w-4" />
+            Audit Readiness
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-6 w-6" />
+                Executive Overview
+              </CardTitle>
+              <CardDescription>
+                Comprehensive metrics and key performance indicators for SOX compliance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ExecutiveOverview filters={filters} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="health-check" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-6 w-6" />
+                Compliance Health Check
+              </CardTitle>
+              <CardDescription>
+                Assessment of compliance program effectiveness and risk indicators
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ComplianceHealthCheck filters={filters} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="audit-readiness" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ClipboardCheck className="h-6 w-6" />
+                Audit Readiness Assessment
+              </CardTitle>
+              <CardDescription>
+                Evaluation of preparedness for external audit and remaining action items
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AuditReadinessReport filters={filters} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Common tasks and navigation shortcuts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <BarChart3 className="h-6 w-6" />
+              <span>View Reports</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <AlertTriangle className="h-6 w-6" />
+              <span>Review Issues</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <ClipboardCheck className="h-6 w-6" />
+              <span>Pending Tests</span>
+            </Button>
+            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+              <Shield className="h-6 w-6" />
+              <span>Control Review</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
