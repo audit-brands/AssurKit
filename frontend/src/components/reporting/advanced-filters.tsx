@@ -47,6 +47,10 @@ const filterSchema = z.object({
   testStatuses: z.array(z.enum(['planned', 'in_progress', 'submitted', 'in_review', 'concluded'])).optional(),
   issueStatuses: z.array(z.enum(['open', 'in_remediation', 'ready_for_retest', 'closed'])).optional(),
   controlStatuses: z.array(z.enum(['draft', 'active', 'retired'])).optional(),
+  includeResolved: z.boolean().optional(),
+  includeOverdue: z.boolean().optional(),
+  riskLevel: z.enum(['all', 'low', 'medium', 'high', 'critical']).optional(),
+  period: z.string().optional(),
 
   // Severity & Priority
   issueSeverities: z.array(z.enum(['low', 'medium', 'high', 'critical'])).optional(),
@@ -66,6 +70,9 @@ const filterSchema = z.object({
   assignedUsers: z.array(z.string()).optional(),
   reviewers: z.array(z.string()).optional(),
   createdBy: z.array(z.string()).optional(),
+
+  // Tags and Classification
+  tags: z.array(z.string()).optional(),
 
   // Custom Fields
   customFilters: z.record(z.string(), z.unknown()).optional()

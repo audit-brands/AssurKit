@@ -10,7 +10,6 @@ import {
   Building2,
   Clock,
   Activity,
-  AlertTriangle,
   ChevronLeft,
   Menu,
   Bell,
@@ -70,14 +69,6 @@ const adminSections: AdminSection[] = [
     requiresPermission: 'admin.policies.manage'
   },
   {
-    id: 'audit',
-    title: 'Audit & Monitoring',
-    description: 'Audit trail and system monitoring',
-    icon: Eye,
-    path: '/admin/audit',
-    requiresPermission: 'admin.audit.view'
-  },
-  {
     id: 'periods',
     title: 'Period Management',
     description: 'Fiscal periods and testing cycles',
@@ -95,9 +86,9 @@ const adminSections: AdminSection[] = [
   },
   {
     id: 'audit',
-    title: 'Audit Trail',
-    description: 'System activity and security logs',
-    icon: AlertTriangle,
+    title: 'Audit & Monitoring',
+    description: 'Audit trail and system monitoring',
+    icon: Eye,
     path: '/admin/audit',
     requiresPermission: 'admin.audit.view'
   }
@@ -110,9 +101,10 @@ interface AdminLayoutProps {
     email: string
     permissions: string[]
   }
+  children?: React.ReactNode
 }
 
-export function AdminLayout({ currentUser }: AdminLayoutProps) {
+export function AdminLayout({ currentUser, children }: AdminLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const location = useLocation()
 
@@ -224,7 +216,7 @@ export function AdminLayout({ currentUser }: AdminLayoutProps) {
             </Button>
           </div>
 
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>
