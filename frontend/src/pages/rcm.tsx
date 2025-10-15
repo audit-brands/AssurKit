@@ -1,5 +1,6 @@
 import { RCMGrid } from '@/components/rcm/rcm-grid'
 import { ControlCoverage } from '@/components/rcm/control-coverage'
+import { EffectivenessSummary } from '@/components/rcm/effectiveness-summary'
 
 export function RCMPage() {
   return (
@@ -12,6 +13,7 @@ export function RCMPage() {
       </div>
 
       <ControlCoverage />
+      <EffectivenessSummary />
       <RCMGrid />
     </div>
   )

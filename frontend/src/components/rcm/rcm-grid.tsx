@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useRCMMatrix, type RCMNode } from '@/hooks/use-rcm'
+import { EffectivenessIndicator, type EffectivenessLevel } from './effectiveness-indicator'
 import {
   Table,
   TableBody,
@@ -25,9 +26,6 @@ import {
   ChevronRight,
   ChevronDown,
   Shield,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
   Download,
   Filter
 } from 'lucide-react'
@@ -164,18 +162,42 @@ export function RCMGrid({ companyId }: RCMGridProps) {
     setExpandedNodes(newExpanded)
   }
 
-  const getEffectivenessIcon = (effectiveness?: string) => {
-    switch (effectiveness) {
-      case 'Effective':
-        return <CheckCircle className="h-4 w-4 text-green-600" />
-      case 'Partially Effective':
-        return <AlertCircle className="h-4 w-4 text-yellow-600" />
-      case 'Ineffective':
-        return <XCircle className="h-4 w-4 text-red-600" />
+  const getEffectivenessLevel = (effectiveness?: string): EffectivenessLevel => {
+    if (!effectiveness) return 'not-tested'
+    const normalized = effectiveness.toLowerCase().replace(/ /g, '-')
+    switch (normalized) {
+      case 'effective':
+        return 'effective'
+      case 'partially-effective':
+      case 'partial':
+        return 'partially-effective'
+      case 'ineffective':
+        return 'ineffective'
+      case 'not-tested':
+        return 'not-tested'
+      case 'pending':
+        return 'pending'
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-400" />
+        return 'not-tested'
     }
   }
+
+  const getEffectivenessScore = (effectiveness?: string): number => {
+    switch (getEffectivenessLevel(effectiveness)) {
+      case 'effective':
+        return 90
+      case 'partially-effective':
+        return 60
+      case 'ineffective':
+        return 30
+      case 'pending':
+        return 0
+      case 'not-tested':
+      default:
+        return 0
+    }
+  }
+
 
   const getControlTypeColor = (type?: string) => {
     switch (type) {
@@ -267,10 +289,18 @@ export function RCMGrid({ companyId }: RCMGridProps) {
           </TableCell>
           <TableCell>
             {node.type === 'control' ? (
-              <div className="flex items-center gap-2">
-                {getEffectivenessIcon(node.effectiveness)}
-                <span className="text-sm">{node.effectiveness || 'Not Tested'}</span>
-              </div>
+              <EffectivenessIndicator
+                effectiveness={{
+                  level: getEffectivenessLevel(node.effectiveness),
+                  score: getEffectivenessScore(node.effectiveness),
+                  trend: node.metadata?.trend as ('improving' | 'declining' | 'stable' | null),
+                  lastTested: node.metadata?.lastTested ? new Date(node.metadata.lastTested as string) : undefined,
+                  testCount: node.metadata?.testCount as number,
+                  passRate: node.metadata?.passRate as number
+                }}
+                size="sm"
+                showDetails={false}
+              />
             ) : null}
             {node.type === 'risk' && node.metadata?.assertions ? (
               <div className="flex flex-wrap gap-1">
@@ -313,8 +343,50 @@ export function RCMGrid({ companyId }: RCMGridProps) {
   }
 
   const exportRCM = () => {
-    // TODO: Implement CSV export
-    console.log('Exporting RCM data...')
+    if (!rcmData) return
+
+    // Prepare CSV data
+    const headers = ['Type', 'Name', 'Parent', 'Status', 'Effectiveness', 'Risk Level', 'Control Type', 'Frequency', 'Automation', 'Key Control']
+    const rows: string[][] = []
+
+    // Flatten the tree structure for CSV export
+    const flattenNode = (node: RCMNode, parentName = '') => {
+      const row = [
+        node.type,
+        node.name,
+        parentName,
+        node.status || '',
+        node.effectiveness || '',
+        node.type === 'risk' ? `${node.metadata?.impact || ''}/${node.metadata?.likelihood || ''}` : '',
+        node.type === 'control' ? String(node.metadata?.type || '') : '',
+        node.type === 'control' ? String(node.metadata?.frequency || '') : '',
+        node.type === 'control' ? String(node.metadata?.automation || '') : '',
+        node.type === 'control' && node.metadata?.keyControl ? 'Yes' : ''
+      ]
+      rows.push(row)
+    }
+
+    // Process all nodes
+    rcmData.nodes.forEach(node => {
+      flattenNode(node, node.parent || '')
+    })
+
+    // Convert to CSV format
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+    ].join('\n')
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `rcm-export-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   if (isLoading) {
