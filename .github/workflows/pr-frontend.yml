@@ -42,14 +42,11 @@ jobs:
         
       - name: Run tests
         working-directory: frontend
-        run: npm test -- --ci --coverage --reporters=default --reporters=jest-junit
+        run: npm run test:coverage
         
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-test-results
-          path: frontend/junit.xml
+      - name: Build application
+        working-directory: frontend
+        run: npm run build
 
       - name: Upload coverage
         if: always()
