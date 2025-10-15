@@ -51,7 +51,7 @@ jobs:
         run: npm run typecheck
       - name: Test
         working-directory: frontend
-        run: npm test -- --ci --passWithNoTests
+        run: npm run test:coverage
         
   backend:
     name: Backend CI
