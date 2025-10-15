@@ -68,7 +68,7 @@ const filterSchema = z.object({
   createdBy: z.array(z.string()).optional(),
 
   // Custom Fields
-  customFilters: z.record(z.any()).optional()
+  customFilters: z.record(z.string(), z.unknown()).optional()
 })
 
 export type ReportingFilters = z.infer<typeof filterSchema>
@@ -380,13 +380,13 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(status)}
+                                checked={(field.value || []).includes(status as 'planned' | 'in_progress' | 'submitted' | 'in_review' | 'concluded')}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
-                                    field.onChange([...current, status])
+                                    field.onChange([...current, status as 'planned' | 'submitted' | 'concluded' | 'in_review' | 'in_progress'])
                                   } else {
-                                    field.onChange(current.filter(s => s !== status))
+                                    field.onChange(current.filter((s: string) => s !== status))
                                   }
                                 }}
                               />
@@ -409,13 +409,13 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(severity)}
+                                checked={(field.value || []).includes(severity as 'low' | 'medium' | 'high' | 'critical')}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
-                                    field.onChange([...current, severity])
+                                    field.onChange([...current, severity as 'low' | 'medium' | 'high' | 'critical'])
                                   } else {
-                                    field.onChange(current.filter(s => s !== severity))
+                                    field.onChange(current.filter((s: string) => s !== severity))
                                   }
                                 }}
                               />
@@ -438,13 +438,13 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(priority)}
+                                checked={(field.value || []).includes(priority as 'low' | 'medium' | 'high' | 'urgent')}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
-                                    field.onChange([...current, priority])
+                                    field.onChange([...current, priority as 'low' | 'medium' | 'high' | 'urgent'])
                                   } else {
-                                    field.onChange(current.filter(p => p !== priority))
+                                    field.onChange(current.filter((p: string) => p !== priority))
                                   }
                                 }}
                               />
@@ -474,13 +474,13 @@ export function AdvancedFilters({
                               control={form.control}
                               render={({ field }) => (
                                 <Checkbox
-                                  checked={(field.value || []).includes(level)}
+                                  checked={(field.value || []).includes(level as 'manual' | 'automated' | 'hybrid')}
                                   onCheckedChange={(checked) => {
                                     const current = field.value || []
                                     if (checked) {
-                                      field.onChange([...current, level])
+                                      field.onChange([...current, level as 'manual' | 'automated' | 'hybrid'])
                                     } else {
-                                      field.onChange(current.filter(l => l !== level))
+                                      field.onChange(current.filter((l: string) => l !== level))
                                     }
                                   }}
                                 />
@@ -521,13 +521,13 @@ export function AdvancedFilters({
                               control={form.control}
                               render={({ field }) => (
                                 <Checkbox
-                                  checked={(field.value || []).includes(level)}
+                                  checked={(field.value || []).includes(level as 'public' | 'internal' | 'confidential' | 'restricted')}
                                   onCheckedChange={(checked) => {
                                     const current = field.value || []
                                     if (checked) {
-                                      field.onChange([...current, level])
+                                      field.onChange([...current, level as 'public' | 'internal' | 'confidential' | 'restricted'])
                                     } else {
-                                      field.onChange(current.filter(l => l !== level))
+                                      field.onChange(current.filter((l: string) => l !== level))
                                     }
                                   }}
                                 />

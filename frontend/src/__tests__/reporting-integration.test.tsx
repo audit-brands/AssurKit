@@ -21,11 +21,11 @@ const ReportingDashboard = () => {
     },
     processes: [],
     controls: [],
-    severity: [],
-    status: [],
-    owner: [],
-    reviewer: [],
-    testTypes: [],
+    issueSeverities: [],
+    testStatuses: [],
+    assignedUsers: [],
+    reviewers: [],
+    testMethods: [],
     evidenceTypes: [],
     tags: [],
     includeResolved: false,
@@ -43,9 +43,8 @@ const ReportingDashboard = () => {
       {/* Filter Section */}
       <div className="mb-6">
         <AdvancedFilters
-          filters={filters}
+          initialFilters={filters}
           onFiltersChange={setFilters}
-          isLoading={false}
         />
       </div>
 

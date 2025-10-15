@@ -188,7 +188,7 @@ describe('Reporting utility functions', () => {
           errors.push('Export name is required')
         }
 
-        if (!['csv', 'excel', 'pdf', 'json'].includes(config.format)) {
+        if (!config.format || !['csv', 'excel', 'pdf', 'json'].includes(config.format)) {
           errors.push('Invalid export format')
         }
 
@@ -279,7 +279,7 @@ describe('Reporting utility functions', () => {
 
       const emptyFilters = { processes: [] }
       const undefinedFilters = { processes: undefined }
-      const nullFilters = { processes: null }
+      const nullFilters = { processes: undefined }
 
       expect(buildQueryParams(emptyFilters).toString()).toBe('')
       expect(buildQueryParams(undefinedFilters).toString()).toBe('')

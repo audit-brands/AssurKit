@@ -196,7 +196,7 @@ export function ExportCenter({ filters, dataType }: ExportCenterProps) {
     }
 
     createExportMutation.mutate({
-      name: `${dataType}-export-${format}-${format(new Date(), 'yyyy-MM-dd-HH-mm')}`,
+      name: `${dataType}-export-${format}-${new Date().toISOString().slice(0, 16).replace(/[:]/g, '-')}`,
       filters,
       config: quickConfig
     })
