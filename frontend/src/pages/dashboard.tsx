@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 
 export function DashboardPage() {
+  // Executive dashboard with comprehensive SOX compliance metrics
   const [filters, setFilters] = useState<DashboardFilters>({
     period: 'current'
   })
