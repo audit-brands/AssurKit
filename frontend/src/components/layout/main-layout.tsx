@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
+import { NotificationCenter } from '@/components/notifications/notification-center'
 import {
   Building2,
   Network,
@@ -13,7 +14,9 @@ import {
   Users,
   LayoutDashboard,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  UserCheck,
+  ClipboardList
 } from 'lucide-react'
 
 const navigation = [
@@ -26,6 +29,9 @@ const navigation = [
   { name: 'RCM', href: '/rcm', icon: Grid3x3, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Tests', href: '/tests', icon: ClipboardCheck, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Evidence', href: '/evidence', icon: FileCheck, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
+  { name: 'Issues', href: '/issues', icon: AlertTriangle, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
+  { name: 'Assignments', href: '/assignments', icon: UserCheck, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
+  { name: 'Reviews', href: '/reviews', icon: ClipboardList, roles: ['Admin', 'Manager', 'Tester', 'Viewer'] },
   { name: 'Users', href: '/users', icon: Users, roles: ['Admin'] },
 ]
 
@@ -103,6 +109,7 @@ export function MainLayout() {
             </h2>
           </div>
           <div className="flex items-center space-x-4">
+            <NotificationCenter />
             <span className="text-sm text-gray-600">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',

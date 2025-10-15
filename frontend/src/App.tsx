@@ -13,6 +13,8 @@ import { RCMPage } from '@/pages/rcm'
 import { TestsPage } from '@/pages/tests'
 import { EvidencePage } from '@/pages/evidence'
 import { IssuesPage } from '@/pages/issues'
+import { AssignmentsPage } from '@/pages/assignments'
+import ReviewsPage from '@/pages/reviews'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEffect } from 'react'
 
@@ -44,6 +46,8 @@ function App() {
               <Route path="/tests" element={<TestsPage />} />
               <Route path="/evidence" element={<EvidencePage />} />
               <Route path="/issues" element={<IssuesPage />} />
+              <Route path="/assignments" element={<AssignmentsPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
 
               {/* Admin only */}
               <Route

@@ -113,31 +113,110 @@ php -S localhost:8080 -t public
 - **Authentication**: OAuth2/OIDC or JWT
 - **Infrastructure**: Docker, Nginx, PostgreSQL, Redis (optional)
 
-## Core Modules
+## User Features & Capabilities
 
-### Risk & Control Management
-- Hierarchical entity structure (Company → Process → Subprocess)
-- Risk identification and assessment
-- Control design and mapping
-- Risk Control Matrix (RCM) visualization
+AssurKit provides a comprehensive SOX compliance management platform with the following key features:
 
-### Testing & Evidence
-- Test planning and execution workflows
-- Evidence collection with SHA-256 checksums
-- Sample selection and documentation
-- Review and approval workflows
+### 🏢 Entity Management
+- **Company Hierarchy**: Manage companies, processes, and subprocesses
+- **Process Mapping**: Define business processes and their relationships
+- **Subprocess Details**: Break down processes into manageable components
+- **CRUD Operations**: Full create, read, update, delete capabilities
 
-### Issue Management
-- Exception tracking and severity classification
-- Root cause analysis
-- Remediation plans and tracking
-- Retest scheduling
+### 🎯 Risk & Control Management
+- **Risk Assessment**: Document and categorize risks across business processes
+- **Control Design**: Define preventive and detective controls
+- **Control Mapping**: Link controls to specific risks and processes
+- **Control Lifecycle**: Track controls from draft to active to retired status
+- **Key Controls**: Flag and manage key vs. non-key controls
 
-### Reporting & Analytics
-- Real-time dashboards with Recharts
-- Status tracking by process and control
-- Exception trends and heatmaps
-- CSV export capabilities
+### 📊 Risk-Control Matrix (RCM)
+- **Interactive Grid**: Visual representation of risk-control relationships
+- **Hierarchical View**: Expandable tree structure for complex mappings
+- **Effectiveness Scoring**: Visual indicators for control effectiveness
+- **Coverage Analysis**: Identify uncovered risks and control gaps
+- **CSV Export**: Export RCM data for external reporting
+- **Advanced Filtering**: Filter by effectiveness, risk level, control status
+
+### 🧪 Control Testing
+- **Test Planning**: Create comprehensive test plans for controls
+- **Test Execution**: Execute tests with structured procedures
+- **Test Cycles**: Organize testing into periods and cycles
+- **Sample Selection**: Define and track test samples
+- **Test Status Tracking**: Monitor progress from planned to concluded
+- **Test Results**: Document pass/fail/qualified outcomes
+- **Reviewer Assignment**: Assign testers and reviewers
+
+### 📁 Evidence Management
+- **Secure File Upload**: Drag-and-drop upload with validation
+- **File Types**: Support for PDF, DOC, XLS, images, TXT, CSV, JSON
+- **Checksum Verification**: SHA-256 checksums for file integrity
+- **Metadata Management**: Description, tags, confidentiality levels
+- **Key Evidence**: Flag critical evidence for audits
+- **File Preview**: In-browser preview for supported file types
+- **Advanced Search**: Search by filename, content, metadata, tags
+- **Bulk Operations**: Mass update or delete operations
+- **Storage Analytics**: Track file counts, sizes, and trends
+- **Retention Management**: Manage evidence retention policies
+
+### 🔍 Advanced Search & Filtering
+- **Multi-Criteria Search**: Search across multiple data fields
+- **Filter Persistence**: Maintain filter state across sessions
+- **Tag-Based Filtering**: Organize content with custom tags
+- **Date Range Filtering**: Filter by upload dates and periods
+- **Status Filtering**: Filter by workflow status
+- **Visual Filter Indicators**: Clear display of active filters
+
+### 📈 Analytics & Reporting
+- **Executive Dashboard**: High-level metrics and trends
+- **Evidence Statistics**: File type distribution and storage metrics
+- **Test Progress**: Testing completion rates and timelines
+- **Control Coverage**: Risk coverage and gap analysis
+- **Trend Analysis**: Monthly and periodic trend charts
+- **Interactive Charts**: Recharts-powered visualizations
+- **Export Capabilities**: CSV export for external reporting
+
+### 🔐 Security & Compliance Features
+- **Role-Based Access Control**: Admin, Manager, Tester, Viewer roles
+- **Audit Trail**: Complete tracking of all changes
+- **Data Encryption**: HTTPS/TLS for all communications
+- **File Validation**: Strict file type and size validation
+- **Immutable Evidence**: Checksums prevent tampering
+- **Confidentiality Levels**: Public, Internal, Confidential, Restricted
+- **Secure Downloads**: Protected file download URLs
+
+### 🎨 User Experience
+- **Modern Interface**: Clean, intuitive design with shadcn/ui
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Dark/Light Themes**: User preference support
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Keyboard Navigation**: Full keyboard support
+- **Loading States**: Clear feedback during operations
+- **Error Handling**: Comprehensive error messages and recovery
+
+### 📋 Workflow Management
+- **Status Tracking**: Clear status for all entities
+- **Assignment Management**: Assign tasks to team members
+- **Due Date Tracking**: Monitor deadlines and overdue items
+- **Notification System**: Alerts for important updates
+- **Progress Indicators**: Visual progress tracking
+- **Bulk Actions**: Efficient mass operations
+
+### 🔄 Integration Ready
+- **API-First Design**: RESTful API for all operations
+- **TypeScript Safety**: Full type safety throughout
+- **Modular Architecture**: Easy to extend and customize
+- **Docker Deployment**: Container-ready for any environment
+- **Self-Hosted**: Complete control over your data
+
+### 📊 Data Management
+- **Pagination**: Efficient handling of large datasets
+- **Real-Time Updates**: Live data with TanStack Query
+- **Optimistic Updates**: Immediate UI feedback
+- **Caching**: Smart caching for performance
+- **Offline Resilience**: Graceful handling of connectivity issues
+
+This comprehensive feature set provides everything needed for effective SOX compliance management, from initial risk assessment through evidence collection and audit reporting.
 
 ## Documentation
 
