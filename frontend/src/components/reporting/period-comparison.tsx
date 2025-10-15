@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -11,18 +10,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
   Line,
-  ComposedChart,
-  Area,
-  AreaChart
+  ComposedChart
 } from 'recharts'
 import {
   TrendingUp,
@@ -32,7 +27,6 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react'
-import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
 
 export interface PeriodMetrics {
   period: string

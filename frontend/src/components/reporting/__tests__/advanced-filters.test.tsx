@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 import { AdvancedFilters } from '../advanced-filters'
 import type { ReportingFilters } from '../advanced-filters'
 
@@ -249,7 +248,6 @@ describe('AdvancedFilters Component', () => {
     renderAdvancedFilters()
 
     const fromDateInput = screen.getByDisplayValue('01/01/2024')
-    const toDateInput = screen.getByDisplayValue('06/30/2024')
 
     // Try to set from date after to date
     await user.clear(fromDateInput)

@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
@@ -29,13 +28,10 @@ import {
   Download,
   FileText,
   FileSpreadsheet,
-  Image,
-  Calendar,
   Clock,
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  Mail,
   Settings
 } from 'lucide-react'
 import { format } from 'date-fns'
@@ -112,7 +108,6 @@ export function ExportCenter({ filters, dataType }: ExportCenterProps) {
     grouping: [],
     sorting: []
   })
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [exportName, setExportName] = useState('')
 
   const { data: exportJobs = [], refetch: refetchJobs } = useQuery({

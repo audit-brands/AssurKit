@@ -9,13 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -25,12 +18,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
   Filter,
   CalendarIcon,
-  X,
   Save,
   FolderOpen,
   ChevronDown,
@@ -38,7 +29,6 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
-import { cn } from '@/lib/utils'
 
 const filterSchema = z.object({
   // Date Range

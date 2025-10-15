@@ -19,17 +19,11 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  ScatterChart,
-  Scatter,
-  Cell
+  ResponsiveContainer
 } from 'recharts'
 import {
   AlertTriangle,
-  TrendingUp,
-  Calendar,
   Download,
-  Filter,
   BarChart3
 } from 'lucide-react'
 
@@ -110,11 +104,6 @@ const SEVERITY_COLORS = {
   low: '#65a30d'
 }
 
-const TREND_COLORS = {
-  up: '#dc2626',
-  down: '#16a34a',
-  stable: '#6b7280'
-}
 
 export function ExceptionHeatmap({ timeRange = 'last-3-months', processFilter }: ExceptionHeatmapProps) {
   const [selectedTimeRange, setSelectedTimeRange] = useState(timeRange)
@@ -138,9 +127,6 @@ export function ExceptionHeatmap({ timeRange = 'last-3-months', processFilter }:
     gcTime: 30 * 60 * 1000, // 30 minutes
   })
 
-  const getSeverityColor = (severity: string) => {
-    return SEVERITY_COLORS[severity as keyof typeof SEVERITY_COLORS] || '#6b7280'
-  }
 
   const getTrendIcon = (direction: string) => {
     return direction === 'up' ? '↗' : direction === 'down' ? '↘' : '→'
