@@ -181,7 +181,7 @@ describe('Reporting utility functions', () => {
 
   describe('Export validation', () => {
     it('validates export configuration', () => {
-      const validateExportConfig = (config: any): string[] => {
+      const validateExportConfig = (config: { name?: string; format?: string; include_charts?: boolean; include_summary?: boolean; include_raw_data?: boolean }): string[] => {
         const errors: string[] = []
 
         if (!config.name || !config.name.trim()) {
@@ -230,7 +230,7 @@ describe('Reporting utility functions', () => {
 
   describe('Filter aggregation', () => {
     it('builds query parameters from filters', () => {
-      const buildQueryParams = (filters: any): URLSearchParams => {
+      const buildQueryParams = (filters: { dateRange?: { preset?: string }; processes?: string[]; severity?: string[]; status?: string[] }): URLSearchParams => {
         const params = new URLSearchParams()
 
         if (filters.dateRange?.preset) {
@@ -267,7 +267,7 @@ describe('Reporting utility functions', () => {
     })
 
     it('handles empty or undefined filter values', () => {
-      const buildQueryParams = (filters: any): URLSearchParams => {
+      const buildQueryParams = (filters: { dateRange?: { preset?: string }; processes?: string[]; severity?: string[]; status?: string[] }): URLSearchParams => {
         const params = new URLSearchParams()
 
         if (filters.processes?.length) {

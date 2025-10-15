@@ -170,7 +170,7 @@ export function AdvancedFilters({
     }
 
     if (from && to) {
-      form.setValue('dateRange', { from, to, preset: preset as any })
+      form.setValue('dateRange', { from, to, preset: preset as 'custom' | 'last-7-days' | 'last-30-days' | 'last-3-months' | 'last-6-months' | 'current-year' | 'last-year' })
     }
   }
 
@@ -380,7 +380,7 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(status as any)}
+                                checked={(field.value || []).includes(status)}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
@@ -409,7 +409,7 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(severity as any)}
+                                checked={(field.value || []).includes(severity)}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
@@ -438,7 +438,7 @@ export function AdvancedFilters({
                             control={form.control}
                             render={({ field }) => (
                               <Checkbox
-                                checked={(field.value || []).includes(priority as any)}
+                                checked={(field.value || []).includes(priority)}
                                 onCheckedChange={(checked) => {
                                   const current = field.value || []
                                   if (checked) {
@@ -474,7 +474,7 @@ export function AdvancedFilters({
                               control={form.control}
                               render={({ field }) => (
                                 <Checkbox
-                                  checked={(field.value || []).includes(level as any)}
+                                  checked={(field.value || []).includes(level)}
                                   onCheckedChange={(checked) => {
                                     const current = field.value || []
                                     if (checked) {
@@ -521,7 +521,7 @@ export function AdvancedFilters({
                               control={form.control}
                               render={({ field }) => (
                                 <Checkbox
-                                  checked={(field.value || []).includes(level as any)}
+                                  checked={(field.value || []).includes(level)}
                                   onCheckedChange={(checked) => {
                                     const current = field.value || []
                                     if (checked) {

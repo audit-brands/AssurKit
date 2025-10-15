@@ -441,7 +441,7 @@ describe('ExportCenter Component', () => {
       download: '',
       click: vi.fn(),
     }
-    vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any)
+    vi.spyOn(document, 'createElement').mockReturnValue(mockLink as unknown as HTMLAnchorElement)
 
     renderWithQueryClient(<ExportCenter filters={mockFilters} dataType="tests" />)
 
@@ -546,7 +546,7 @@ describe('ExportCenter Component', () => {
   })
 
   it('validates export configuration', () => {
-    const validateConfig = (config: any): string[] => {
+    const validateConfig = (config: { name?: string; format?: string; include_charts?: boolean; include_summary?: boolean; include_raw_data?: boolean }): string[] => {
       const errors: string[] = []
 
       if (!config.name?.trim()) {

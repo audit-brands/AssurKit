@@ -27,7 +27,7 @@ const renderWithQueryClient = (component: React.ReactElement) => {
 }
 
 // Simple mock component for testing
-const MockReportingComponent = ({ title, data }: { title: string; data?: any }) => {
+const MockReportingComponent = ({ title, data }: { title: string; data?: Record<string, unknown> }) => {
   return (
     <div data-testid="reporting-component">
       <h1>{title}</h1>

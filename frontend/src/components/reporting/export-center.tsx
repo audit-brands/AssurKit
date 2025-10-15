@@ -303,7 +303,7 @@ export function ExportCenter({ filters, dataType }: ExportCenterProps) {
                       <Label>Format</Label>
                       <Select
                         value={exportConfig.format}
-                        onValueChange={(value) => setExportConfig(prev => ({ ...prev, format: value as any }))}
+                        onValueChange={(value) => setExportConfig(prev => ({ ...prev, format: value as 'csv' | 'excel' | 'pdf' | 'json' }))}
                       >
                         <SelectTrigger>
                           <SelectValue />
