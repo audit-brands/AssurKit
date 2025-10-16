@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace AssurKit\Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
 use Illuminate\Database\Capsule\Manager as Capsule;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 /**
- * Base test case for AssurKit tests
+ * Base test case for AssurKit tests.
  *
  * Provides common functionality for all tests including:
  * - Database setup and transactions
@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
     protected static bool $databaseSetup = false;
 
     /**
-     * Set up the test case
+     * Set up the test case.
      */
     protected function setUp(): void
     {
@@ -37,7 +37,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Tear down the test case
+     * Tear down the test case.
      */
     protected function tearDown(): void
     {
@@ -50,11 +50,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Set up database connection for testing
+     * Set up database connection for testing.
      */
     protected function setupDatabaseConnection(): void
     {
-        $capsule = new Capsule;
+        $capsule = new Capsule();
 
         $capsule->addConnection([
             'driver' => 'pgsql',
@@ -73,7 +73,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Create a test user in the database
+     * Create a test user in the database.
      */
     protected function createUser(array $attributes = []): array
     {
@@ -96,7 +96,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Create a test company in the database
+     * Create a test company in the database.
      */
     protected function createCompany(array $attributes = []): array
     {
@@ -113,7 +113,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Create a test control in the database
+     * Create a test control in the database.
      */
     protected function createControl(array $attributes = []): array
     {
@@ -136,7 +136,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Assert that a JSON response has a specific structure
+     * Assert that a JSON response has a specific structure.
      */
     protected function assertJsonStructure(array $structure, array $json): void
     {
@@ -151,7 +151,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Assert that a JSON response matches expected data
+     * Assert that a JSON response matches expected data.
      */
     protected function assertJsonMatch(array $expected, array $actual): void
     {

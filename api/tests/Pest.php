@@ -45,11 +45,11 @@ expect()->extend('toBeOne', function () {
 */
 
 /**
- * Create a test database connection
+ * Create a test database connection.
  */
 function setupTestDatabase(): Capsule
 {
-    $capsule = new Capsule;
+    $capsule = new Capsule();
 
     $capsule->addConnection([
         'driver' => 'pgsql',
@@ -70,7 +70,7 @@ function setupTestDatabase(): Capsule
 }
 
 /**
- * Begin a database transaction
+ * Begin a database transaction.
  */
 function beginDatabaseTransaction(): void
 {
@@ -78,7 +78,7 @@ function beginDatabaseTransaction(): void
 }
 
 /**
- * Rollback database transaction
+ * Rollback database transaction.
  */
 function rollbackDatabaseTransaction(): void
 {
@@ -86,7 +86,7 @@ function rollbackDatabaseTransaction(): void
 }
 
 /**
- * Create a mock user for testing
+ * Create a mock user for testing.
  */
 function createTestUser(array $overrides = []): array
 {
@@ -101,7 +101,7 @@ function createTestUser(array $overrides = []): array
 }
 
 /**
- * Create a mock control for testing
+ * Create a mock control for testing.
  */
 function createTestControl(array $overrides = []): array
 {

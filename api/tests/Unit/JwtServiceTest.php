@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use AssurKit\Services\JwtService;
 use AssurKit\Models\User;
+use AssurKit\Services\JwtService;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 

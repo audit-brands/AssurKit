@@ -42,6 +42,14 @@ type ViewLevel = 'process' | 'subprocess' | 'risk'
 type EffectivenessFilter = 'all' | 'effective' | 'partially-effective' | 'ineffective' | 'not-tested'
 type RiskLevelFilter = 'all' | 'high' | 'medium' | 'low'
 
+const matchesRiskFilter = (level: string | undefined, filter: RiskLevelFilter) => {
+  if (!level) return false
+  if (filter === 'high') {
+    return level === 'high' || level === 'critical'
+  }
+  return level === filter
+}
+
 export function RCMGrid({ companyId }: RCMGridProps) {
   const { data: rcmData, isLoading } = useRCMMatrix(companyId)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
@@ -111,12 +119,10 @@ export function RCMGrid({ companyId }: RCMGridProps) {
       }
 
       // Risk level filter
-      if (riskLevelFilter !== 'all') {
-        if (node.type === 'risk') {
-          const riskLevel = node.metadata?.impact as string
-          if (riskLevel?.toLowerCase() !== riskLevelFilter) {
-            return null
-          }
+      if (riskLevelFilter !== 'all' && node.type === 'risk') {
+        const normalizedLevel = (node.metadata?.normalizedRiskLevel as string | undefined) || (node.metadata?.impact as string | undefined)?.toLowerCase()
+        if (!matchesRiskFilter(normalizedLevel, riskLevelFilter)) {
+          return null
         }
       }
 
@@ -126,7 +132,7 @@ export function RCMGrid({ companyId }: RCMGridProps) {
         if (hasControls) {
           return null
         }
-      }
+}
 
       // View level filter
       if (viewLevel === 'process' && !['company', 'process'].includes(node.type)) {

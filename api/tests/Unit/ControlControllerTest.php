@@ -41,6 +41,7 @@ describe('ControlController::index', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return isset($data['data'])
                     && isset($data['pagination'])
                     && isset($data['filters'])
@@ -64,8 +65,9 @@ describe('ControlController::index', function () {
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
                 $names = array_column($data['data'], 'name');
-                return in_array('Access Control System', $names)
-                    && !in_array('Segregation of Duties', $names);
+
+                return in_array('Access Control System', $names, true)
+                    && !in_array('Segregation of Duties', $names, true);
             }));
 
         $response = $this->controller->index($this->request, $this->response);
@@ -89,6 +91,7 @@ describe('ControlController::index', function () {
                         return false;
                     }
                 }
+
                 return true;
             }));
 
@@ -113,6 +116,7 @@ describe('ControlController::index', function () {
                         return false;
                     }
                 }
+
                 return true;
             }));
 
@@ -137,6 +141,7 @@ describe('ControlController::index', function () {
                         return false;
                     }
                 }
+
                 return true;
             }));
 
@@ -161,6 +166,7 @@ describe('ControlController::index', function () {
                         return false;
                     }
                 }
+
                 return true;
             }));
 
@@ -186,6 +192,7 @@ describe('ControlController::index', function () {
                     return false;
                 }
                 $firstControl = $data['data'][0];
+
                 return isset($firstControl['frequency_weight'])
                     && isset($firstControl['automation_score']);
             }));
@@ -204,6 +211,7 @@ describe('ControlController::show', function () {
             ->once()
             ->with(Mockery::on(function ($json) use ($control) {
                 $data = json_decode($json, true);
+
                 return $data['id'] === $control['id']
                     && $data['name'] === $control['name']
                     && isset($data['risks'])
@@ -224,8 +232,9 @@ describe('ControlController::show', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Control not found', $data['errors']);
+                    && in_array('Control not found', $data['errors'], true);
             }));
 
         $response = $this->controller->show(
@@ -258,6 +267,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Control created successfully'
                     && isset($data['control']['id'])
                     && isset($data['control']['control_id'])
@@ -295,6 +305,7 @@ describe('ControlController::create', function () {
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
                 // Should have a control_id like CTL-001
+
                 return isset($data['control']['control_id'])
                     && preg_match('/CTL-\d{3}/', $data['control']['control_id']);
             }));
@@ -317,6 +328,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && !empty($data['errors']);
             }));
@@ -343,6 +355,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && count(array_filter($data['errors'], function ($error) {
                         return str_contains($error, 'Invalid control type');
@@ -371,6 +384,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -396,6 +410,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -421,6 +436,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && count(array_filter($data['errors'], function ($error) {
                         return str_contains($error, 'email');
@@ -450,6 +466,7 @@ describe('ControlController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -519,6 +536,7 @@ describe('ControlController::update', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Control updated successfully'
                     && $data['control']['name'] === 'Updated Control Name';
             }));
@@ -545,8 +563,9 @@ describe('ControlController::update', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Control not found', $data['errors']);
+                    && in_array('Control not found', $data['errors'], true);
             }));
 
         $response = $this->controller->update(
@@ -616,6 +635,7 @@ describe('ControlController::delete', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Control deleted successfully';
             }));
 
@@ -637,8 +657,9 @@ describe('ControlController::delete', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Control not found', $data['errors']);
+                    && in_array('Control not found', $data['errors'], true);
             }));
 
         $response = $this->controller->delete(

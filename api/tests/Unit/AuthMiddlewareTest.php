@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use AssurKit\Middleware\AuthMiddleware;
-use AssurKit\Services\JwtService;
 use AssurKit\Models\User;
+use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -156,6 +156,7 @@ describe('AuthMiddleware::process', function () {
         $this->request->shouldReceive('withAttribute')
             ->with('user', Mockery::on(function ($user) use (&$capturedUser) {
                 $capturedUser = $user;
+
                 return $user instanceof User;
             }))
             ->andReturn($modifiedRequest);
@@ -197,6 +198,7 @@ describe('AuthMiddleware::process', function () {
         $modifiedRequest->shouldReceive('withAttribute')
             ->with('token_payload', Mockery::on(function ($payload) use (&$capturedPayload) {
                 $capturedPayload = $payload;
+
                 return true;
             }))
             ->andReturnSelf();

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use AssurKit\Models\User;
 use AssurKit\Models\Role;
+use AssurKit\Models\User;
 use AssurKit\Services\JwtService;
 
 beforeEach(function () {
@@ -217,7 +217,7 @@ describe('RBAC Integration Tests', function () {
 });
 
 /**
- * Helper function to ensure a role exists
+ * Helper function to ensure a role exists.
  */
 function ensureRoleExists(string $roleName): void
 {

@@ -1,9 +1,7 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useCompanies } from './use-companies'
-import { useProcesses } from './use-processes'
-import { useSubprocesses } from './use-subprocesses'
+import api from '@/lib/api-client'
 import { useRisks } from './use-risks'
-import { useControls } from './use-controls'
 
 export interface RCMNode {
   id: string
@@ -39,255 +37,345 @@ export interface RCMMatrix {
   }
 }
 
-// Build the complete RCM matrix from entity data
-export function useRCMMatrix(companyId?: string) {
-  const { data: companies } = useCompanies()
-  const { data: processes } = useProcesses()
-  const { data: subprocesses } = useSubprocesses()
-  const { data: risks } = useRisks()
-  const { data: controls } = useControls()
+interface ApiRiskControlMatrixItem {
+  risk_id: string
+  risk_name: string
+  risk_type: string
+  risk_level: string
+  subprocess: {
+    id: string
+    name: string
+    process: {
+      id: string
+      name: string
+      company: {
+        id: string
+        name: string
+      }
+    }
+  }
+  controls: Array<{
+    control_id: string
+    control_name: string
+    control_business_id: string
+    control_type: string
+    frequency: string
+    is_key_control: boolean
+    effectiveness: string | null
+    rationale: string | null
+    last_updated: string | null
+  }>
+}
 
+const effectivenessMap: Record<string, RCMNode['effectiveness']> = {
+  Effective: 'Effective',
+  'Partially Effective': 'Partially Effective',
+  'Not Effective': 'Ineffective',
+}
+
+const normalizeRiskLevel = (riskLevel: string): 'low' | 'medium' | 'high' | 'critical' => {
+  const normalized = riskLevel.toLowerCase()
+  if (normalized.includes('very high')) return 'critical'
+  if (normalized.includes('high')) return 'high'
+  if (normalized.includes('medium')) return 'medium'
+  return 'low'
+}
+
+const buildRCMMatrix = (items: ApiRiskControlMatrixItem[]): RCMMatrix => {
+  const nodes: RCMNode[] = []
+  const relationships: RCMRelationship[] = []
+
+  const companyNodes = new Map<string, RCMNode>()
+  const processNodes = new Map<string, RCMNode>()
+  const subprocessNodes = new Map<string, RCMNode>()
+  const riskNodes = new Map<string, RCMNode>()
+  const controlNodes = new Map<string, RCMNode>()
+  const relationshipKeys = new Set<string>()
+
+  const uniqueControlIds = new Set<string>()
+  const keyControlIds = new Set<string>()
+  const effectiveControlIds = new Set<string>()
+  let controlsWithoutTesting = 0
+
+  const addNode = (map: Map<string, RCMNode>, id: string, node: RCMNode) => {
+    if (!map.has(id)) {
+      map.set(id, node)
+      nodes.push(node)
+    }
+    return map.get(id)!
+  }
+
+  const addRelationship = (rel: RCMRelationship) => {
+    const key = `${rel.from}::${rel.to}::${rel.type}`
+    if (!relationshipKeys.has(key)) {
+      relationshipKeys.add(key)
+      relationships.push(rel)
+    }
+  }
+
+  items.forEach(item => {
+    const company = addNode(companyNodes, item.subprocess.process.company.id, {
+      id: item.subprocess.process.company.id,
+      type: 'company',
+      name: item.subprocess.process.company.name,
+    })
+
+    const process = addNode(processNodes, item.subprocess.process.id, {
+      id: item.subprocess.process.id,
+      type: 'process',
+      name: item.subprocess.process.name,
+      parent: company.id,
+    })
+
+    addRelationship({
+      from: company.id,
+      to: process.id,
+      type: 'owns',
+    })
+
+    const subprocess = addNode(subprocessNodes, item.subprocess.id, {
+      id: item.subprocess.id,
+      type: 'subprocess',
+      name: item.subprocess.name,
+      parent: process.id,
+    })
+
+    addRelationship({
+      from: process.id,
+      to: subprocess.id,
+      type: 'contains',
+    })
+
+    const normalizedLevel = normalizeRiskLevel(item.risk_level)
+    const likelihood =
+      normalizedLevel === 'critical'
+        ? 'Almost Certain'
+        : normalizedLevel === 'high'
+          ? 'Likely'
+          : normalizedLevel === 'medium'
+            ? 'Possible'
+            : 'Unlikely'
+
+    const risk = addNode(riskNodes, item.risk_id, {
+      id: item.risk_id,
+      type: 'risk',
+      name: item.risk_name,
+      parent: subprocess.id,
+      metadata: {
+        riskLevel: item.risk_level,
+        normalizedRiskLevel: normalizedLevel,
+        riskType: item.risk_type,
+        impact: normalizedLevel === 'critical'
+          ? 'Critical'
+          : normalizedLevel === 'high'
+            ? 'High'
+            : normalizedLevel === 'medium'
+              ? 'Medium'
+              : 'Low',
+        likelihood,
+      },
+    })
+
+    addRelationship({
+      from: subprocess.id,
+      to: risk.id,
+      type: 'contains',
+    })
+
+    if (item.controls.length === 0) {
+      return
+    }
+
+    item.controls.forEach(control => {
+      uniqueControlIds.add(control.control_id)
+      if (control.is_key_control) {
+        keyControlIds.add(control.control_id)
+      }
+
+      const effectiveness = control.effectiveness
+        ? effectivenessMap[control.effectiveness] ?? 'Not Tested'
+        : 'Not Tested'
+
+      if (effectiveness === 'Effective') {
+        effectiveControlIds.add(control.control_id)
+      }
+
+      if (effectiveness === 'Not Tested') {
+        controlsWithoutTesting++
+      }
+
+      const nodeId = `${item.risk_id}:${control.control_id}`
+      const controlNode = addNode(controlNodes, nodeId, {
+        id: nodeId,
+        type: 'control',
+        name: control.control_name,
+        parent: risk.id,
+        status: control.effectiveness ?? undefined,
+        effectiveness,
+        metadata: {
+          originalControlId: control.control_id,
+          businessId: control.control_business_id,
+          type: control.control_type,
+          frequency: control.frequency,
+          keyControl: control.is_key_control,
+          rationale: control.rationale,
+          lastUpdated: control.last_updated,
+        },
+      })
+
+      addRelationship({
+        from: risk.id,
+        to: controlNode.id,
+        type: 'mitigates',
+        strength: control.is_key_control ? 'primary' : 'secondary',
+      })
+    })
+  })
+
+  const risksWithoutControls = items.filter(item => item.controls.length === 0).length
+
+  const statistics = {
+    totalControls: uniqueControlIds.size,
+    keyControls: keyControlIds.size,
+    effectiveControls: effectiveControlIds.size,
+    risksWithoutControls,
+    controlsWithoutTesting,
+  }
+
+  return {
+    nodes,
+    relationships,
+    statistics,
+  }
+}
+
+export function useRCMMatrix(companyId?: string) {
   return useQuery({
     queryKey: ['rcm-matrix', companyId],
     queryFn: async (): Promise<RCMMatrix> => {
-      const nodes: RCMNode[] = []
-      const relationships: RCMRelationship[] = []
-
-      // Filter data by company if specified
-      const filteredCompanies = companyId
-        ? companies?.filter(c => c.id === companyId) || []
-        : companies || []
-
-      const companyIds = new Set(filteredCompanies.map(c => c.id))
-
-      const filteredProcesses = processes?.filter(p =>
-        companyIds.has(p.company_id)
-      ) || []
-
-      const processIds = new Set(filteredProcesses.map(p => p.id))
-
-      const filteredSubprocesses = subprocesses?.filter(s =>
-        processIds.has(s.process_id)
-      ) || []
-
-      const subprocessIds = new Set(filteredSubprocesses.map(s => s.id))
-
-      const filteredRisks = risks?.filter(r =>
-        subprocessIds.has(r.subprocess_id)
-      ) || []
-
-      const riskIds = new Set(filteredRisks.map(r => r.id))
-
-      const filteredControls = controls?.filter(c =>
-        riskIds.has(c.risk_id)
-      ) || []
-
-      // Add company nodes
-      filteredCompanies.forEach(company => {
-        nodes.push({
-          id: company.id,
-          type: 'company',
-          name: company.company_name,
-          status: company.status
-        })
-      })
-
-      // Add process nodes and relationships
-      filteredProcesses.forEach(process => {
-        nodes.push({
-          id: process.id,
-          type: 'process',
-          name: process.process_name,
-          parent: process.company_id,
-          status: process.status
-        })
-
-        relationships.push({
-          from: process.company_id,
-          to: process.id,
-          type: 'owns'
-        })
-      })
-
-      // Add subprocess nodes and relationships
-      filteredSubprocesses.forEach(subprocess => {
-        nodes.push({
-          id: subprocess.id,
-          type: 'subprocess',
-          name: subprocess.subprocess_name,
-          parent: subprocess.process_id,
-          status: subprocess.status
-        })
-
-        relationships.push({
-          from: subprocess.process_id,
-          to: subprocess.id,
-          type: 'contains'
-        })
-      })
-
-      // Add risk nodes and relationships
-      filteredRisks.forEach(risk => {
-        nodes.push({
-          id: risk.id,
-          type: 'risk',
-          name: risk.risk_name,
-          parent: risk.subprocess_id,
-          status: risk.status,
-          metadata: {
-            impact: risk.impact,
-            likelihood: risk.likelihood,
-            category: risk.risk_category,
-            assertions: risk.assertions
-          }
-        })
-
-        relationships.push({
-          from: risk.subprocess_id,
-          to: risk.id,
-          type: 'contains'
-        })
-      })
-
-      // Add control nodes and relationships
-      filteredControls.forEach(control => {
-        // Determine effectiveness based on control status and testing
-        let effectiveness: RCMNode['effectiveness'] = 'Not Tested'
-        if (control.status === 'Active') {
-          // In a real app, this would come from test results
-          effectiveness = 'Effective' // Default for demo
-        }
-
-        nodes.push({
-          id: control.id,
-          type: 'control',
-          name: control.control_name,
-          parent: control.risk_id,
-          status: control.status,
-          effectiveness,
-          metadata: {
-            type: control.control_type,
-            frequency: control.frequency,
-            automation: control.automation,
-            keyControl: control.key_control,
-            owner: control.owner
-          }
-        })
-
-        relationships.push({
-          from: control.risk_id,
-          to: control.id,
-          type: 'mitigates',
-          strength: control.key_control ? 'primary' : 'secondary'
-        })
-      })
-
-      // Calculate statistics
-      const statistics = {
-        totalControls: filteredControls.length,
-        keyControls: filteredControls.filter(c => c.key_control).length,
-        effectiveControls: filteredControls.filter(c => c.status === 'Active').length,
-        risksWithoutControls: filteredRisks.filter(risk =>
-          !filteredControls.some(control => control.risk_id === risk.id)
-        ).length,
-        controlsWithoutTesting: filteredControls.filter(c => c.status === 'Draft').length
-      }
-
-      return {
-        nodes,
-        relationships,
-        statistics
-      }
-    },
-    enabled: !!companies && !!processes && !!subprocesses && !!risks && !!controls
-  })
-}
-
-// Get RCM data for a specific process
-export function useProcessRCM(processId: string) {
-  const { data: processes } = useProcesses()
-  const { data: subprocesses } = useSubprocesses()
-  const { data: risks } = useRisks()
-  const { data: controls } = useControls()
-
-  return useQuery({
-    queryKey: ['process-rcm', processId],
-    queryFn: async () => {
-      const process = processes?.find(p => p.id === processId)
-      if (!process) return null
-
-      const processSubprocesses = subprocesses?.filter(s => s.process_id === processId) || []
-      const subprocessIds = new Set(processSubprocesses.map(s => s.id))
-
-      const processRisks = risks?.filter(r => subprocessIds.has(r.subprocess_id)) || []
-      const riskIds = new Set(processRisks.map(r => r.id))
-
-      const processControls = controls?.filter(c => riskIds.has(c.risk_id)) || []
-
-      return {
-        process,
-        subprocesses: processSubprocesses,
-        risks: processRisks,
-        controls: processControls,
-        summary: {
-          subprocessCount: processSubprocesses.length,
-          riskCount: processRisks.length,
-          controlCount: processControls.length,
-          keyControlCount: processControls.filter(c => c.key_control).length,
-          highRiskCount: processRisks.filter(r => r.impact === 'High' || r.impact === 'Critical').length
-        }
-      }
-    },
-    enabled: !!processId && !!processes && !!subprocesses && !!risks && !!controls
-  })
-}
-
-// Get control coverage metrics
-export function useControlCoverage() {
-  const { data: risks } = useRisks()
-  const { data: controls } = useControls()
-
-  return useQuery({
-    queryKey: ['control-coverage'],
-    queryFn: async () => {
-      if (!risks || !controls) return null
-
-      const riskControlMap = new Map<string, number>()
-
-      controls.forEach(control => {
-        const count = riskControlMap.get(control.risk_id) || 0
-        riskControlMap.set(control.risk_id, count + 1)
-      })
-
-      const coverage = {
-        totalRisks: risks.length,
-        coveredRisks: riskControlMap.size,
-        uncoveredRisks: risks.length - riskControlMap.size,
-        coveragePercentage: (riskControlMap.size / risks.length) * 100,
-        risksByControlCount: {
-          none: 0,
-          single: 0,
-          multiple: 0
+      const response = await api.get('/api/risk-control-matrix', {
+        params: {
+          company_id: companyId,
+          limit: 1000,
         },
-        highRisksWithoutControls: [] as typeof risks
-      }
-
-      risks.forEach(risk => {
-        const controlCount = riskControlMap.get(risk.id) || 0
-        if (controlCount === 0) {
-          coverage.risksByControlCount.none++
-          if (risk.impact === 'High' || risk.impact === 'Critical') {
-            coverage.highRisksWithoutControls.push(risk)
-          }
-        } else if (controlCount === 1) {
-          coverage.risksByControlCount.single++
-        } else {
-          coverage.risksByControlCount.multiple++
-        }
       })
-
-      return coverage
-    },
-    enabled: !!risks && !!controls
+      const items = (response.data?.data ?? []) as ApiRiskControlMatrixItem[]
+      return buildRCMMatrix(items)
+    }
   })
+}
+
+export function useProcessRCM(processId: string) {
+  const rcmQuery = useRCMMatrix()
+
+  const data = useMemo(() => {
+    if (!processId || !rcmQuery.data) {
+      return null
+    }
+
+    const processNode = rcmQuery.data.nodes.find(node => node.type === 'process' && node.id === processId)
+    if (!processNode) {
+      return null
+    }
+
+    const subprocesses = rcmQuery.data.nodes.filter(
+      node => node.type === 'subprocess' && node.parent === processId
+    )
+
+    const subprocessIds = new Set(subprocesses.map(node => node.id))
+    const risks = rcmQuery.data.nodes.filter(
+      node => node.type === 'risk' && node.parent && subprocessIds.has(node.parent)
+    )
+
+    const riskIds = new Set(risks.map(risk => risk.id))
+    const controls = rcmQuery.data.nodes.filter(
+      node => node.type === 'control' && node.parent && riskIds.has(node.parent)
+    )
+
+    return {
+      process: processNode,
+      subprocesses,
+      risks,
+      controls,
+      summary: {
+        subprocessCount: subprocesses.length,
+        riskCount: risks.length,
+        controlCount: controls.length,
+        keyControlCount: controls.filter(control => control.metadata?.keyControl === true).length,
+        highRiskCount: risks.filter(risk => {
+          const riskLevel = risk.metadata?.riskLevel as string | undefined
+          return riskLevel === 'High' || riskLevel === 'Very High'
+        }).length,
+      },
+    }
+  }, [processId, rcmQuery.data])
+
+  return {
+    data,
+    isLoading: rcmQuery.isLoading,
+    error: rcmQuery.error,
+  }
+}
+
+export function useControlCoverage() {
+  const rcmQuery = useRCMMatrix()
+  const { data: risksData } = useRisks()
+
+  const coverage = useMemo(() => {
+    if (!rcmQuery.data || !risksData) {
+      return null
+    }
+
+    const riskNodes = rcmQuery.data.nodes.filter(node => node.type === 'risk')
+    const controlRelationships = rcmQuery.data.relationships.filter(rel => rel.type === 'mitigates')
+
+    const controlCountByRisk = controlRelationships.reduce<Map<string, number>>((acc, rel) => {
+      const current = acc.get(rel.from) ?? 0
+      acc.set(rel.from, current + 1)
+      return acc
+    }, new Map())
+
+    const risksByControlCount = {
+      none: 0,
+      single: 0,
+      multiple: 0,
+    }
+
+    const highRisksWithoutControls: typeof risksData = []
+
+    riskNodes.forEach(riskNode => {
+      const count = controlCountByRisk.get(riskNode.id) ?? 0
+      if (count === 0) {
+        risksByControlCount.none++
+        const sourceRisk = risksData.find(risk => risk.id === riskNode.id)
+        if (sourceRisk) {
+          const riskLevel = riskNode.metadata?.riskLevel as string | undefined
+          if (riskLevel === 'High' || riskLevel === 'Very High') {
+            highRisksWithoutControls.push(sourceRisk)
+          }
+        }
+      } else if (count === 1) {
+        risksByControlCount.single++
+      } else {
+        risksByControlCount.multiple++
+      }
+    })
+
+    return {
+      totalRisks: risksData.length,
+      coveredRisks: risksData.length - risksByControlCount.none,
+      uncoveredRisks: risksByControlCount.none,
+      coveragePercentage: risksData.length > 0
+        ? ((risksData.length - risksByControlCount.none) / risksData.length) * 100
+        : 0,
+      risksByControlCount,
+      highRisksWithoutControls,
+    }
+  }, [rcmQuery.data, risksData])
+
+  return {
+    data: coverage,
+    isLoading: rcmQuery.isLoading,
+    error: rcmQuery.error,
+  }
 }

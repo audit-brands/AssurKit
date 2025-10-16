@@ -42,6 +42,7 @@ describe('CompanyController::index', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return isset($data['data'])
                     && isset($data['pagination'])
                     && $data['pagination']['page'] === 1;
@@ -63,6 +64,7 @@ describe('CompanyController::index', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return count($data['data']) === 1
                     && $data['data'][0]['name'] === 'Acme Corporation';
             }));
@@ -89,6 +91,7 @@ describe('CompanyController::index', function () {
                         return false;
                     }
                 }
+
                 return true;
             }));
 
@@ -110,6 +113,7 @@ describe('CompanyController::index', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['pagination']['page'] === 2
                     && $data['pagination']['limit'] === 10
                     && count($data['data']) <= 10;
@@ -129,6 +133,7 @@ describe('CompanyController::index', function () {
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
                 // Should be capped at 100
+
                 return $data['pagination']['limit'] === 100;
             }));
 
@@ -146,6 +151,7 @@ describe('CompanyController::show', function () {
             ->once()
             ->with(Mockery::on(function ($json) use ($company) {
                 $data = json_decode($json, true);
+
                 return $data['id'] === $company['id']
                     && $data['name'] === $company['name']
                     && isset($data['processes']);
@@ -165,8 +171,9 @@ describe('CompanyController::show', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Company not found', $data['errors']);
+                    && in_array('Company not found', $data['errors'], true);
             }));
 
         $response = $this->controller->show(
@@ -196,6 +203,7 @@ describe('CompanyController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Company created successfully'
                     && isset($data['company']['id'])
                     && $data['company']['name'] === 'New Company';
@@ -224,6 +232,7 @@ describe('CompanyController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && !empty($data['errors']);
             }));
@@ -245,6 +254,7 @@ describe('CompanyController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -266,6 +276,7 @@ describe('CompanyController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -287,6 +298,7 @@ describe('CompanyController::create', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -329,6 +341,7 @@ describe('CompanyController::update', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Company updated successfully'
                     && $data['company']['name'] === 'Updated Name';
             }));
@@ -355,8 +368,9 @@ describe('CompanyController::update', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Company not found', $data['errors']);
+                    && in_array('Company not found', $data['errors'], true);
             }));
 
         $response = $this->controller->update(
@@ -426,6 +440,7 @@ describe('CompanyController::delete', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Company deleted successfully';
             }));
 
@@ -447,8 +462,9 @@ describe('CompanyController::delete', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Company not found', $data['errors']);
+                    && in_array('Company not found', $data['errors'], true);
             }));
 
         $response = $this->controller->delete(

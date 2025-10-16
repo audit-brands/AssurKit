@@ -45,16 +45,20 @@ export function ControlTable({ riskId }: ControlTableProps) {
 
   // Filter controls by risk if riskId is provided
   const filteredControls = controls?.filter(control =>
-    riskId ? control.risk_id === riskId : true
+    riskId ? control.risk_ids.includes(riskId) : true
   )
 
   // Get risk and subprocess names
-  const getRiskName = (riskId: string) => {
+  const getRiskName = (control: Control) => {
+    const primaryRiskId = control.risk_id || control.risk_ids[0]
+    if (!primaryRiskId) return 'Unassigned'
     return risks?.find(risk => risk.id === riskId)?.risk_name || 'Unknown Risk'
   }
 
-  const getSubprocessName = (riskId: string) => {
-    const risk = risks?.find(r => r.id === riskId)
+  const getSubprocessName = (control: Control) => {
+    const primaryRiskId = control.risk_id || control.risk_ids[0]
+    if (!primaryRiskId) return 'Unassigned'
+    const risk = risks?.find(r => r.id === primaryRiskId)
     if (!risk) return 'Unknown Subprocess'
     return subprocesses?.find(subprocess => subprocess.id === risk.subprocess_id)?.subprocess_name || 'Unknown Subprocess'
   }
@@ -71,7 +75,10 @@ export function ControlTable({ riskId }: ControlTableProps) {
   const confirmDelete = async () => {
     if (deleteDialog.control) {
       try {
-        await deleteControl.mutateAsync(deleteDialog.control.id)
+        await deleteControl.mutateAsync({
+          id: deleteDialog.control.id,
+          risk_ids: deleteDialog.control.risk_ids
+        })
         setDeleteDialog({ open: false, control: undefined })
       } catch (error) {
         console.error('Failed to delete control:', error)
@@ -90,7 +97,6 @@ export function ControlTable({ riskId }: ControlTableProps) {
       case 'Preventive': return 'bg-blue-500'
       case 'Detective': return 'bg-yellow-500'
       case 'Corrective': return 'bg-orange-500'
-      case 'Compensating': return 'bg-purple-500'
       default: return 'bg-gray-500'
     }
   }
@@ -202,10 +208,10 @@ export function ControlTable({ riskId }: ControlTableProps) {
               <TableRow key={control.id}>
                 <TableCell className="font-medium">{control.control_name}</TableCell>
                 {!riskId && (
-                  <TableCell>{getRiskName(control.risk_id)}</TableCell>
+                  <TableCell>{getRiskName(control)}</TableCell>
                 )}
                 {!riskId && (
-                  <TableCell>{getSubprocessName(control.risk_id)}</TableCell>
+                  <TableCell>{getSubprocessName(control)}</TableCell>
                 )}
                 <TableCell>
                   <Badge className={cn('text-white', getControlTypeColor(control.control_type))}>

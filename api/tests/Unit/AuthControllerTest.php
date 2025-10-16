@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use AssurKit\Controllers\AuthController;
-use AssurKit\Models\User;
 use AssurKit\Models\Role;
+use AssurKit\Models\User;
 use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,6 +57,7 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Login successful'
                     && isset($data['token'])
                     && isset($data['user'])
@@ -83,8 +84,9 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Invalid email or password', $data['errors']);
+                    && in_array('Invalid email or password', $data['errors'], true);
             }));
 
         $response = $this->controller->login($this->request, $this->response);
@@ -105,8 +107,9 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Invalid email or password', $data['errors']);
+                    && in_array('Invalid email or password', $data['errors'], true);
             }));
 
         $response = $this->controller->login($this->request, $this->response);
@@ -127,6 +130,7 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && count(array_filter($data['errors'], function ($error) {
                         return str_contains($error, 'email');
@@ -151,6 +155,7 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && count(array_filter($data['errors'], function ($error) {
                         return str_contains($error, 'Password');
@@ -172,6 +177,7 @@ describe('AuthController::login', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && !empty($data['errors']);
             }));
@@ -199,6 +205,7 @@ describe('AuthController::login', function () {
             ->with(Mockery::on(function ($json) use (&$capturedToken) {
                 $data = json_decode($json, true);
                 $capturedToken = $data['token'] ?? null;
+
                 return isset($data['token']);
             }));
 
@@ -230,6 +237,7 @@ describe('AuthController::register', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Registration successful'
                     && isset($data['token'])
                     && isset($data['user'])
@@ -281,8 +289,9 @@ describe('AuthController::register', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Email already exists', $data['errors']);
+                    && in_array('Email already exists', $data['errors'], true);
             }));
 
         $response = $this->controller->register($this->request, $this->response);
@@ -304,6 +313,7 @@ describe('AuthController::register', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -326,6 +336,7 @@ describe('AuthController::register', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -348,6 +359,7 @@ describe('AuthController::register', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
                     && count(array_filter($data['errors'], function ($error) {
                         return str_contains($error, 'Password');
@@ -394,11 +406,12 @@ describe('AuthController::me', function () {
             ->once()
             ->with(Mockery::on(function ($json) use ($user) {
                 $data = json_decode($json, true);
+
                 return isset($data['user'])
                     && $data['user']['id'] === $user->id
                     && $data['user']['email'] === 'me@example.com'
                     && $data['user']['name'] === 'Me User'
-                    && in_array('Admin', $data['user']['roles']);
+                    && in_array('Admin', $data['user']['roles'], true);
             }));
 
         $response = $this->controller->me($this->request, $this->response);
@@ -422,10 +435,11 @@ describe('AuthController::me', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return isset($data['user']['roles'])
                     && count($data['user']['roles']) === 2
-                    && in_array('Admin', $data['user']['roles'])
-                    && in_array('Viewer', $data['user']['roles']);
+                    && in_array('Admin', $data['user']['roles'], true)
+                    && in_array('Viewer', $data['user']['roles'], true);
             }));
 
         $response = $this->controller->me($this->request, $this->response);
@@ -450,6 +464,7 @@ describe('AuthController::refresh', function () {
             ->once()
             ->with(Mockery::on(function ($json) use ($originalToken) {
                 $data = json_decode($json, true);
+
                 return $data['message'] === 'Token refreshed successfully'
                     && isset($data['token'])
                     && $data['token'] !== $originalToken; // Should be a new token
@@ -469,8 +484,9 @@ describe('AuthController::refresh', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('No token provided', $data['errors']);
+                    && in_array('No token provided', $data['errors'], true);
             }));
 
         $response = $this->controller->refresh($this->request, $this->response);
@@ -487,8 +503,9 @@ describe('AuthController::refresh', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true
-                    && in_array('Invalid token', $data['errors']);
+                    && in_array('Invalid token', $data['errors'], true);
             }));
 
         $response = $this->controller->refresh($this->request, $this->response);
@@ -508,6 +525,7 @@ describe('AuthController::refresh', function () {
             ->once()
             ->with(Mockery::on(function ($json) {
                 $data = json_decode($json, true);
+
                 return $data['error'] === true;
             }));
 
@@ -518,7 +536,7 @@ describe('AuthController::refresh', function () {
 });
 
 /**
- * Helper function to ensure a role exists
+ * Helper function to ensure a role exists.
  */
 function ensureRoleExists(string $roleName): void
 {

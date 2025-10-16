@@ -29,12 +29,12 @@ import { useEffect } from 'react'
 const controlFormSchema = z.object({
   risk_id: z.string().min(1, 'Risk is required'),
   control_name: z.string().min(2, 'Control name must be at least 2 characters'),
-  control_type: z.enum(['Preventive', 'Detective', 'Corrective', 'Compensating']),
-  frequency: z.enum(['Real-time', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Annual', 'Ad-hoc']),
+  control_type: z.enum(['Preventive', 'Detective', 'Corrective']),
+  frequency: z.enum(['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Annual', 'Ad-hoc']),
   automation: z.enum(['Manual', 'Semi-Automated', 'Automated']),
   key_control: z.boolean(),
-  description: z.string().optional(),
-  owner: z.string().optional(),
+  description: z.string().min(2, 'Description is required'),
+  owner: z.string().email('Owner email must be valid'),
   testing_procedures: z.string().optional(),
   status: z.enum(['Draft', 'Active', 'Retired']).optional()
 })
@@ -118,9 +118,10 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
         frequency: data.frequency,
         automation: data.automation,
         key_control: data.key_control,
-        description: data.description || undefined,
-        owner: data.owner || undefined,
-        testing_procedures: data.testing_procedures || undefined
+        description: data.description,
+        owner: data.owner,
+        testing_procedures: data.testing_procedures || undefined,
+        status: data.status || 'Draft'
       }
 
       if (control) {
@@ -128,7 +129,7 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
           id: control.id,
           data: {
             ...controlData,
-            status: data.status
+            previous_risk_id: control.risk_id
           }
         })
       } else {
@@ -193,7 +194,7 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
               <Label htmlFor="control_type">Control Type</Label>
               <Select
                 value={form.watch('control_type')}
-                onValueChange={(value: string) => form.setValue('control_type', value as 'Preventive' | 'Detective' | 'Corrective' | 'Compensating')}
+                onValueChange={(value: string) => form.setValue('control_type', value as 'Preventive' | 'Detective' | 'Corrective')}
                 disabled={isLoading}
               >
                 <SelectTrigger>
@@ -203,7 +204,6 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
                   <SelectItem value="Preventive">Preventive</SelectItem>
                   <SelectItem value="Detective">Detective</SelectItem>
                   <SelectItem value="Corrective">Corrective</SelectItem>
-                  <SelectItem value="Compensating">Compensating</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -211,14 +211,13 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
               <Label htmlFor="frequency">Frequency</Label>
               <Select
                 value={form.watch('frequency')}
-                onValueChange={(value: string) => form.setValue('frequency', value as 'Real-time' | 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual' | 'Ad-hoc')}
+                onValueChange={(value: string) => form.setValue('frequency', value as 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual' | 'Ad-hoc')}
                 disabled={isLoading}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Real-time">Real-time</SelectItem>
                   <SelectItem value="Daily">Daily</SelectItem>
                   <SelectItem value="Weekly">Weekly</SelectItem>
                   <SelectItem value="Monthly">Monthly</SelectItem>
@@ -263,11 +262,12 @@ export function ControlForm({ open, onOpenChange, control, defaultRiskId }: Cont
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="owner">Control Owner</Label>
+            <Label htmlFor="owner">Control Owner Email</Label>
             <Input
               id="owner"
+              type="email"
               {...form.register('owner')}
-              placeholder="e.g., CFO, Controller, IT Manager"
+              placeholder="owner@example.com"
               disabled={isLoading}
             />
             {form.formState.errors.owner && (

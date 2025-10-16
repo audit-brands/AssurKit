@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use AssurKit\Middleware\RoleMiddleware;
-use AssurKit\Models\User;
 use AssurKit\Models\Role;
+use AssurKit\Models\User;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -256,7 +256,7 @@ describe('RoleMiddleware::process', function () {
 });
 
 /**
- * Helper function to ensure a role exists
+ * Helper function to ensure a role exists.
  */
 function ensureRoleExists(string $roleName): void
 {
