@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { type DashboardFilters } from '@/hooks/use-dashboard'
+import {
+  type DashboardFilters,
+  useExecutiveSummary,
+  useComplianceHealthCheck,
+  useAuditReadinessReport
+} from '@/hooks/use-dashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -7,6 +12,7 @@ import { ExecutiveOverview } from '@/components/dashboard/executive-overview'
 import { ComplianceHealthCheck } from '@/components/dashboard/compliance-health-check'
 import { AuditReadinessReport } from '@/components/dashboard/audit-readiness-report'
 import { DashboardFilters as DashboardFiltersComponent } from '@/components/dashboard/dashboard-filters'
+import { objectArrayToCSV, recordToCSV, downloadCSV, createMultiSectionCSV } from '@/lib/export-csv'
 import {
   BarChart3,
   Shield,
@@ -26,6 +32,12 @@ export function DashboardPage() {
 
   const [lastRefresh, setLastRefresh] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+
+  // Fetch dashboard data
+  const { data: executiveData } = useExecutiveSummary(filters)
+  const { data: complianceData } = useComplianceHealthCheck(filters)
+  const { data: auditData } = useAuditReadinessReport(filters)
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -35,9 +47,111 @@ export function DashboardPage() {
     setIsRefreshing(false)
   }
 
-  const handleExport = () => {
-    // TODO: Implement export functionality
-    console.log('Export dashboard data with filters:', filters)
+  const handleExport = async () => {
+    if (!executiveData || !complianceData || !auditData) {
+      console.error('Dashboard data not loaded')
+      return
+    }
+
+    setIsExporting(true)
+
+    try {
+      // Create CSV sections
+      const sections = []
+
+      // Executive Summary Metrics
+      sections.push({
+        title: 'Executive Summary Metrics',
+        data: recordToCSV({
+          'Total Controls': executiveData.total_controls,
+          'Active Controls': executiveData.active_controls,
+          'Key Controls': executiveData.key_controls,
+          'Tests Completed': executiveData.tests_completed,
+          'Test Pass Rate': `${executiveData.test_pass_rate}%`,
+          'Open Issues': executiveData.open_issues,
+          'Critical Issues': executiveData.critical_issues,
+          'Total Evidence Files': executiveData.total_evidence_files,
+        })
+      })
+
+      // Monthly Test Trends
+      if (executiveData.monthly_test_trends.length > 0) {
+        sections.push({
+          title: 'Monthly Test Trends',
+          data: objectArrayToCSV(executiveData.monthly_test_trends)
+        })
+      }
+
+      // Monthly Issue Trends
+      if (executiveData.monthly_issue_trends.length > 0) {
+        sections.push({
+          title: 'Monthly Issue Trends',
+          data: objectArrayToCSV(executiveData.monthly_issue_trends)
+        })
+      }
+
+      // Top Risk Areas
+      if (executiveData.top_risk_areas.length > 0) {
+        sections.push({
+          title: 'Top Risk Areas',
+          data: objectArrayToCSV(executiveData.top_risk_areas)
+        })
+      }
+
+      // Compliance Health Check
+      sections.push({
+        title: 'Compliance Health Scores',
+        data: recordToCSV({
+          'Overall Score': complianceData.overall_score,
+          'Control Design Score': complianceData.control_design_score,
+          'Control Execution Score': complianceData.control_execution_score,
+          'Issue Management Score': complianceData.issue_management_score,
+          'Evidence Quality Score': complianceData.evidence_quality_score,
+        })
+      })
+
+      // Red Flags
+      if (complianceData.red_flags.length > 0) {
+        sections.push({
+          title: 'Red Flags',
+          data: objectArrayToCSV(complianceData.red_flags)
+        })
+      }
+
+      // Audit Readiness
+      sections.push({
+        title: 'Audit Readiness Metrics',
+        data: recordToCSV({
+          'Readiness Score': `${auditData.readiness_score}%`,
+          'Control Documentation Score': `${auditData.control_documentation_score}%`,
+          'Test Execution Completeness': `${auditData.test_execution_completeness}%`,
+          'Evidence Collection Score': `${auditData.evidence_collection_score}%`,
+          'Issue Resolution Score': `${auditData.issue_resolution_score}%`,
+          'Estimated Days to Ready': auditData.estimated_days_to_ready,
+        })
+      })
+
+      // Critical Action Items
+      if (auditData.critical_action_items.length > 0) {
+        sections.push({
+          title: 'Critical Action Items',
+          data: objectArrayToCSV(auditData.critical_action_items)
+        })
+      }
+
+      // Generate filename with current date
+      const date = new Date().toISOString().split('T')[0]
+      const periodLabel = filters.period || 'all'
+      const filename = `dashboard-export-${periodLabel}-${date}.csv`
+
+      // Create and download CSV
+      const csvContent = createMultiSectionCSV(sections)
+      downloadCSV(csvContent, filename)
+    } catch (error) {
+      console.error('Export failed:', error)
+    } finally {
+      setIsExporting(false)
+    }
   }
 
   return (
@@ -67,9 +181,10 @@ export function DashboardPage() {
             variant="outline"
             size="sm"
             onClick={handleExport}
+            disabled={isExporting || !executiveData || !complianceData || !auditData}
           >
-            <Download className="h-4 w-4 mr-2" />
-            Export
+            <Download className={`h-4 w-4 mr-2 ${isExporting ? 'animate-pulse' : ''}`} />
+            {isExporting ? 'Exporting...' : 'Export'}
           </Button>
         </div>
       </div>

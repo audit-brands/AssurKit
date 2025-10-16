@@ -9,6 +9,7 @@ import {
   type Review,
   type ReviewComment
 } from '@/hooks/use-reviews'
+import { useAuthStore } from '@/stores/auth-store'
 import {
   Dialog,
   DialogContent,
@@ -64,6 +65,7 @@ export function ReviewDetails({ reviewId, open, onOpenChange }: ReviewDetailsPro
   const [changeComments, setChangeComments] = useState('')
   const [newComment, setNewComment] = useState('')
 
+  const currentUser = useAuthStore(state => state.user)
   const { data: review, isLoading } = useReview(reviewId || '')
   const { data: comments } = useReviewComments(reviewId || '')
   const approveReview = useApproveReview()
@@ -194,8 +196,35 @@ export function ReviewDetails({ reviewId, open, onOpenChange }: ReviewDetailsPro
   }
 
   const canUserApprove = (review: Review) => {
-    // TODO: Check if current user can approve based on their role and approval chain
-    return review.status === 'in_review' || review.status === 'pending'
+    // Must be authenticated
+    if (!currentUser) return false
+
+    // Review must be in an approvable state
+    if (review.status !== 'in_review' && review.status !== 'pending') {
+      return false
+    }
+
+    // If no approval chain, use basic role check (Admin/Manager can approve)
+    if (!review.approval_chain || review.approval_chain.length === 0) {
+      return currentUser.role === 'Admin' || currentUser.role === 'Manager'
+    }
+
+    // Find the current pending level (first level with 'pending' status)
+    const currentLevel = review.approval_chain
+      .sort((a, b) => a.level - b.level)
+      .find(level => level.status === 'pending')
+
+    // If no pending level, cannot approve (all levels processed)
+    if (!currentLevel) return false
+
+    // If a specific user is assigned to this level, only they can approve
+    if (currentLevel.user_id) {
+      return currentLevel.user_id === currentUser.id
+    }
+
+    // Otherwise, check if current user's role matches the required role
+    // Note: role comparison is case-sensitive based on the Role enum
+    return currentLevel.role === currentUser.role
   }
 
   if (!reviewId) return null
