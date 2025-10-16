@@ -116,7 +116,9 @@ document.createRange = () => {
   range.getClientRects = vi.fn(() => ({
     length: 0,
     item: () => null,
-    [Symbol.iterator]: vi.fn(),
-  })) as any
+    [Symbol.iterator]: function* () {
+      // Empty iterator for DOMRectList mock
+    },
+  } as DOMRectList))
   return range
 }
