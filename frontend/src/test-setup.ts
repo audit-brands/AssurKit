@@ -1,23 +1,46 @@
-import { vi } from 'vitest'
+import { vi, afterEach } from 'vitest'
 import '@testing-library/jest-dom'
+import { cleanup } from '@testing-library/react'
+
+// Cleanup after each test
+afterEach(() => {
+  cleanup()
+  vi.clearAllMocks()
+})
+
+// Mock fetch for tests
+global.fetch = vi.fn()
 
 // Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}))
+global.ResizeObserver = class ResizeObserver {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}))
+global.IntersectionObserver = class IntersectionObserver {
+  constructor(public callback: IntersectionObserverCallback) {}
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+  root = null
+  rootMargin = ''
+  thresholds = []
+  takeRecords = vi.fn(() => [])
+}
 
 // Mock URL methods
 global.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
 global.URL.revokeObjectURL = vi.fn()
+
+// Mock HTMLElement methods for pointer events
+HTMLElement.prototype.hasPointerCapture = vi.fn(() => false)
+HTMLElement.prototype.setPointerCapture = vi.fn()
+HTMLElement.prototype.releasePointerCapture = vi.fn()
+
+// Mock scrollIntoView
+HTMLElement.prototype.scrollIntoView = vi.fn()
 
 // Mock HTMLCanvasElement
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
@@ -75,3 +98,25 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
+
+// Mock document.createRange for Radix UI components
+document.createRange = () => {
+  const range = new Range()
+  range.getBoundingClientRect = vi.fn(() => ({
+    x: 0,
+    y: 0,
+    bottom: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    width: 0,
+    toJSON: () => ({}),
+  }))
+  range.getClientRects = vi.fn(() => ({
+    length: 0,
+    item: () => null,
+    [Symbol.iterator]: vi.fn(),
+  })) as any
+  return range
+}

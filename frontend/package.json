@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ci.ts --passWithNoTests",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --config vitest.config.ci.ts --coverage",
     "test:watch": "vitest"
   },
   "devDependencies": {

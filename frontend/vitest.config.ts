@@ -9,6 +9,24 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Better test isolation and cleanup
+    isolate: true,
+    clearMocks: true,
+    restoreMocks: true,
+    mockReset: true,
+    // Pool options for better memory management
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: false,
+        maxForks: 4,
+        minForks: 1,
+      }
+    },
+    // Timeouts
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    // Coverage configuration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
