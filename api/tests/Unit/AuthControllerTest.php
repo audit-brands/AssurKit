@@ -35,8 +35,8 @@ beforeEach(function () {
         ->andReturnSelf();
 
     // Ensure default roles exist
-    $this->ensureRoleExists('Viewer');
-    $this->ensureRoleExists('Admin');
+    ensureRoleExists('Viewer');
+    ensureRoleExists('Admin');
 });
 
 describe('AuthController::login', function () {
