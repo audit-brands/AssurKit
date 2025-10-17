@@ -16,7 +16,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 |
 */
 
-uses(TestCase::class)->in('Feature');
+uses(TestCase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
