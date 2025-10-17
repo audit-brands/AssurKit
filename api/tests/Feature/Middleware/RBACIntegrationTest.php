@@ -202,9 +202,13 @@ describe('RBAC Integration Tests', function () {
         $user = User::createUser('refresh@example.com', 'Refresh User', 'password123');
         $user->assignRole('Manager');
 
-        $user = User::where('email', 'refresh@example.com')->first();
+        $user = User::with('roles')->where('email', 'refresh@example.com')->first();
 
         $originalToken = $this->jwtService->generateToken($user);
+
+        // Sleep to ensure new token has different timestamp
+        sleep(1);
+
         $newToken = $this->jwtService->refreshToken($originalToken);
 
         expect($newToken)->not->toBeNull()

@@ -456,6 +456,9 @@ describe('AuthController::refresh', function () {
         // Generate original token
         $originalToken = $this->jwtService->generateToken($user);
 
+        // Sleep to ensure new token has different timestamp
+        sleep(1);
+
         $this->request->shouldReceive('getHeaderLine')
             ->with('Authorization')
             ->andReturn("Bearer $originalToken");

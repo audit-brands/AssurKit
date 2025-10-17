@@ -181,7 +181,7 @@ describe('AuthMiddleware::process', function () {
         $user->assignRole('Admin');
 
         // Refresh to load roles
-        $user = User::where('email', 'payload@example.com')->first();
+        $user = User::with('roles')->where('email', 'payload@example.com')->first();
 
         $token = $this->jwtService->generateToken($user);
 
