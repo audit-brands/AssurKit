@@ -180,9 +180,8 @@ describe('AuthMiddleware::process', function () {
         $user = User::createUser('payload@example.com', 'Payload User', 'password123');
         $user->assignRole('Admin');
 
-        // Get fresh instance with roles eager loaded
-        $userId = $user->id;
-        $user = User::with('roles')->where('id', $userId)->first();
+        // Get fresh instance with roles loaded from database
+        $user = $user->fresh(['roles']);
 
         $token = $this->jwtService->generateToken($user);
 
