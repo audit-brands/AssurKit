@@ -180,8 +180,8 @@ describe('AuthMiddleware::process', function () {
         $user = User::createUser('payload@example.com', 'Payload User', 'password123');
         $user->assignRole('Admin');
 
-        // Refresh to load roles relationship
-        $user->load('roles');
+        // Refetch user with roles relationship
+        $user = User::with('roles')->find($user->id);
 
         $token = $this->jwtService->generateToken($user);
 
