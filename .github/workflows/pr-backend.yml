@@ -62,7 +62,17 @@ jobs:
       - name: Install dependencies
         working-directory: api
         run: composer install --prefer-dist --no-progress --no-interaction
-        
+
+      - name: Run database migrations
+        working-directory: api
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: assurkit_test
+          DB_USERNAME: assurkit
+          DB_PASSWORD: assurkit_test
+        run: php migrate.php migrate
+
       - name: Run PHP-CS-Fixer
         working-directory: api
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose

@@ -10,11 +10,30 @@ class MigrationRunner
         \AssurKit\Database\Migrations\CreateUsersTable::class,
         \AssurKit\Database\Migrations\CreateRolesTable::class,
         \AssurKit\Database\Migrations\CreateUserRolesTable::class,
+        \CreateCompaniesTable::class,
+        \CreateProcessesTable::class,
+        \CreateSubprocessesTable::class,
+        \CreateRisksTable::class,
+        \CreateControlsTable::class,
+        \CreateRiskControlMatrixTable::class,
+        \CreateTestsTable::class,
+        \CreateEvidenceTable::class,
     ];
 
     public function __construct()
     {
         Connection::getInstance();
+
+        // Load non-namespaced migration files
+        $migrationsDir = __DIR__ . '/Migrations/';
+        require_once $migrationsDir . '004_create_companies_table.php';
+        require_once $migrationsDir . '005_create_processes_table.php';
+        require_once $migrationsDir . '006_create_subprocesses_table.php';
+        require_once $migrationsDir . '007_create_risks_table.php';
+        require_once $migrationsDir . '008_create_controls_table.php';
+        require_once $migrationsDir . '009_create_risk_control_matrix_table.php';
+        require_once $migrationsDir . '010_create_tests_table.php';
+        require_once $migrationsDir . '011_create_evidence_table.php';
     }
 
     public function migrate(): void
