@@ -179,8 +179,7 @@ class ControlController
             return $this->errorResponse($response, $validation['errors'], 400);
         }
 
-        $control = Control::create([
-            'control_id' => $data['control_id'] ?? null, // Auto-generated if not provided
+        $attributes = [
             'name' => $data['name'],
             'description' => $data['description'],
             'control_type' => $data['control_type'],
@@ -192,7 +191,14 @@ class ControlController
             'evidence_requirements' => $data['evidence_requirements'] ?? null,
             'metadata' => $data['metadata'] ?? null,
             'status' => $data['status'] ?? 'Draft',
-        ]);
+        ];
+
+        // Only include control_id if explicitly provided, otherwise let boot() auto-generate it
+        if (isset($data['control_id'])) {
+            $attributes['control_id'] = $data['control_id'];
+        }
+
+        $control = Control::create($attributes);
 
         $responseData = [
             'message' => 'Control created successfully',
