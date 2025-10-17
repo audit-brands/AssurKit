@@ -535,7 +535,7 @@ describe('AuthController::refresh', function () {
     });
 });
 
-/**
+/*
  * Helper function to ensure a role exists.
  */
 if (!function_exists('ensureRoleExists')) {
