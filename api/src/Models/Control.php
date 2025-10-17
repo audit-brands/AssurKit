@@ -30,16 +30,17 @@ class Control extends Model
         'metadata' => 'array',
     ];
 
-    protected static function boot(): void
+    /**
+     * Override fill to auto-generate control_id if not provided.
+     */
+    public function fill(array $attributes): static
     {
-        parent::boot();
+        // Auto-generate control_id before filling if not provided
+        if (!isset($attributes['control_id']) && !$this->exists) {
+            $attributes['control_id'] = static::generateControlId();
+        }
 
-        static::creating(function ($model) {
-            // Auto-generate control_id if not provided
-            if (empty($model->control_id)) {
-                $model->control_id = static::generateControlId();
-            }
-        });
+        return parent::fill($attributes);
     }
 
     public function risks(): BelongsToMany
