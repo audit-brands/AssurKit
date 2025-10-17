@@ -53,11 +53,11 @@ function setupTestDatabase(): Capsule
 
     $capsule->addConnection([
         'driver' => 'pgsql',
-        'host' => getenv('DB_HOST') ?: 'localhost',
-        'port' => getenv('DB_PORT') ?: 5432,
-        'database' => getenv('DB_DATABASE') ?: 'assurkit_test',
-        'username' => getenv('DB_USERNAME') ?: 'assurkit',
-        'password' => getenv('DB_PASSWORD') ?: 'assurkit_test',
+        'host' => getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost'),
+        'port' => (int) (getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? 5432)),
+        'database' => getenv('DB_DATABASE') ?: ($_ENV['DB_DATABASE'] ?? 'assurkit_test'),
+        'username' => getenv('DB_USERNAME') ?: ($_ENV['DB_USERNAME'] ?? 'assurkit'),
+        'password' => getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? 'assurkit_test'),
         'charset' => 'utf8',
         'collation' => 'utf8_unicode_ci',
         'prefix' => '',
