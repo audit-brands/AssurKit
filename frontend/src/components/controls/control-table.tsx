@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -72,9 +72,14 @@ export function ControlTable({ riskId }: ControlTableProps) {
 
   const debouncedSearch = useDebouncedValue(search, 400)
 
-  useEffect(() => {
-    setPage(1)
-  }, [riskId])
+  // Track previous riskId to reset page when it changes
+  const prevRiskIdRef = useRef(riskId)
+  if (prevRiskIdRef.current !== riskId) {
+    prevRiskIdRef.current = riskId
+    if (page !== 1) {
+      setPage(1)
+    }
+  }
 
   const { data, isLoading, isFetching, error } = useControls({
     page,
