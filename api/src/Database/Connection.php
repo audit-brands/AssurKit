@@ -32,4 +32,20 @@ class Connection
 
         return self::$capsule;
     }
+
+    /**
+     * Set the Capsule instance (primarily for testing).
+     */
+    public static function setInstance(Capsule $capsule): void
+    {
+        self::$capsule = $capsule;
+    }
+
+    /**
+     * Reset the Capsule instance (primarily for testing).
+     */
+    public static function resetInstance(): void
+    {
+        self::$capsule = null;
+    }
 }

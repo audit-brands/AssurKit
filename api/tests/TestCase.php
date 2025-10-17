@@ -47,6 +47,9 @@ abstract class TestCase extends BaseTestCase
         }
 
         parent::tearDown();
+
+        // Reset Connection singleton after tests
+        \AssurKit\Database\Connection::resetInstance();
     }
 
     /**
@@ -70,6 +73,9 @@ abstract class TestCase extends BaseTestCase
 
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
+
+        // Inject test Capsule into Connection singleton so models use the test database
+        \AssurKit\Database\Connection::setInstance($capsule);
     }
 
     /**
