@@ -258,10 +258,12 @@ describe('RoleMiddleware::process', function () {
 /**
  * Helper function to ensure a role exists.
  */
-function ensureRoleExists(string $roleName): void
-{
-    if (!Role::where('name', $roleName)->exists()) {
-        Role::create(['name' => $roleName]);
+if (!function_exists('ensureRoleExists')) {
+    function ensureRoleExists(string $roleName): void
+    {
+        if (!Role::where('name', $roleName)->exists()) {
+            Role::create(['name' => $roleName]);
+        }
     }
 }
 
