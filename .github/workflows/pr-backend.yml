@@ -63,6 +63,15 @@ jobs:
         working-directory: api
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..30}; do
+            PGPASSWORD=assurkit_test psql -h localhost -U assurkit -d assurkit_test -c "SELECT 1" > /dev/null 2>&1 && break
+            echo "Waiting for PostgreSQL to be ready... ($i/30)"
+            sleep 2
+          done
+          PGPASSWORD=assurkit_test psql -h localhost -U assurkit -d assurkit_test -c "SELECT version();"
+
       - name: Run database migrations
         working-directory: api
         env:
