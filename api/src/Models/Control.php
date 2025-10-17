@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AssurKit\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -26,24 +25,16 @@ class Control extends Model
     ];
 
     protected $casts = [
-        'id' => 'string',
         'is_key_control' => 'boolean',
         'evidence_requirements' => 'array',
         'metadata' => 'array',
     ];
-
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     protected static function boot(): void
     {
         parent::boot();
 
         static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) \Ramsey\Uuid\Uuid::uuid4();
-            }
-
             // Auto-generate control_id if not provided
             if (empty($model->control_id)) {
                 $model->control_id = static::generateControlId();
