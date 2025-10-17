@@ -31,17 +31,16 @@ class Control extends Model
     ];
 
     /**
-     * Boot the model and auto-generate control_id.
+     * Override save to auto-generate control_id before saving.
      */
-    protected static function boot(): void
+    public function save(array $options = []): bool
     {
-        parent::boot();
+        // Auto-generate control_id for new models
+        if (!$this->exists && empty($this->control_id)) {
+            $this->control_id = static::generateControlId();
+        }
 
-        static::creating(function (Control $control) {
-            if (empty($control->control_id)) {
-                $control->control_id = static::generateControlId();
-            }
-        });
+        return parent::save($options);
     }
 
     /**
