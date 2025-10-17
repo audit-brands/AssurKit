@@ -47,9 +47,6 @@ abstract class TestCase extends BaseTestCase
         }
 
         parent::tearDown();
-
-        // Reset Connection singleton after tests
-        \AssurKit\Database\Connection::resetInstance();
     }
 
     /**

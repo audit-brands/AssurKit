@@ -40,12 +40,4 @@ class Connection
     {
         self::$capsule = $capsule;
     }
-
-    /**
-     * Reset the Capsule instance (primarily for testing).
-     */
-    public static function resetInstance(): void
-    {
-        self::$capsule = null;
-    }
 }
