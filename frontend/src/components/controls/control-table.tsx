@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -72,14 +72,13 @@ export function ControlTable({ riskId }: ControlTableProps) {
 
   const debouncedSearch = useDebouncedValue(search, 400)
 
-  // Track previous riskId to reset page when it changes
-  const prevRiskIdRef = useRef(riskId)
-  if (prevRiskIdRef.current !== riskId) {
-    prevRiskIdRef.current = riskId
+  // Reset page to 1 when riskId changes (only if not already on page 1)
+  useEffect(() => {
     if (page !== 1) {
       setPage(1)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [riskId])
 
   const { data, isLoading, isFetching, error } = useControls({
     page,
