@@ -1,0 +1,38 @@
+﻿2025-10-15T18:51:26.1703042Z Current runner version: '2.328.0'
+2025-10-15T18:51:26.1726688Z ##[group]Runner Image Provisioner
+2025-10-15T18:51:26.1727532Z Hosted Compute Agent
+2025-10-15T18:51:26.1728133Z Version: 20250912.392
+2025-10-15T18:51:26.1728868Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+2025-10-15T18:51:26.1729673Z Build Date: 2025-09-12T15:23:14Z
+2025-10-15T18:51:26.1730314Z ##[endgroup]
+2025-10-15T18:51:26.1730993Z ##[group]Operating System
+2025-10-15T18:51:26.1731889Z Ubuntu
+2025-10-15T18:51:26.1732440Z 24.04.3
+2025-10-15T18:51:26.1732974Z LTS
+2025-10-15T18:51:26.1733508Z ##[endgroup]
+2025-10-15T18:51:26.1734059Z ##[group]Runner Image
+2025-10-15T18:51:26.1734695Z Image: ubuntu-24.04
+2025-10-15T18:51:26.1735281Z Version: 20250929.60.1
+2025-10-15T18:51:26.1736451Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+2025-10-15T18:51:26.1738356Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+2025-10-15T18:51:26.1739503Z ##[endgroup]
+2025-10-15T18:51:26.1740686Z ##[group]GITHUB_TOKEN Permissions
+2025-10-15T18:51:26.1742734Z Contents: read
+2025-10-15T18:51:26.1743269Z Metadata: read
+2025-10-15T18:51:26.1743908Z Packages: read
+2025-10-15T18:51:26.1744400Z ##[endgroup]
+2025-10-15T18:51:26.1746421Z Secret source: Actions
+2025-10-15T18:51:26.1747295Z Prepare workflow directory
+2025-10-15T18:51:26.2075640Z Prepare all required actions
+2025-10-15T18:51:26.2174059Z Complete job name: All Checks Passed
+2025-10-15T18:51:26.2905471Z ##[group]Run if [[ "failure" == "failure" || "skipped" == "failure" ]]; then
+2025-10-15T18:51:26.2906543Z [36;1mif [[ "failure" == "failure" || "skipped" == "failure" ]]; then[0m
+2025-10-15T18:51:26.2907355Z [36;1m  echo "One or more checks failed"[0m
+2025-10-15T18:51:26.2907985Z [36;1m  exit 1[0m
+2025-10-15T18:51:26.2908461Z [36;1mfi[0m
+2025-10-15T18:51:26.2909054Z [36;1mecho "All checks passed successfully"[0m
+2025-10-15T18:51:26.3682496Z shell: /usr/bin/bash -e {0}
+2025-10-15T18:51:26.3683969Z ##[endgroup]
+2025-10-15T18:51:26.3898783Z One or more checks failed
+2025-10-15T18:51:26.3924820Z ##[error]Process completed with exit code 1.
+2025-10-15T18:51:26.4072106Z Cleaning up orphan processes

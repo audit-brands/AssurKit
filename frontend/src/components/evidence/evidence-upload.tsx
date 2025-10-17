@@ -70,7 +70,8 @@ export function EvidenceUpload({
   const [confidentialityLevel, setConfidentialityLevel] = useState<'Public' | 'Internal' | 'Confidential' | 'Restricted'>('Internal')
   const [isUploading, setIsUploading] = useState(false)
 
-  const { data: controls } = useControls()
+  const { data: controlsData } = useControls({ limit: 100 })
+  const controls = controlsData?.items ?? []
   const { data: testExecutions } = useTestExecutions()
   const uploadEvidence = useUploadEvidence()
 

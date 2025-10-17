@@ -1,0 +1,5 @@
+2025-10-15T18:51:23.1410000Z Requested labels: ubuntu-latest
+2025-10-15T18:51:23.1410000Z Job defined at: audit-brands/AssurKit/.github/workflows/ci.yml@refs/heads/development
+2025-10-15T18:51:23.1410000Z Waiting for a runner to pick up this job...
+2025-10-15T18:51:23.5890000Z Job is waiting for a hosted runner to come online.
+2025-10-15T18:51:23.5900000Z Job is about to start running on the hosted runner: GitHub Actions 1000012272

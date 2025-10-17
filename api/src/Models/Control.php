@@ -31,16 +31,13 @@ class Control extends Model
     ];
 
     /**
-     * Override fill to auto-generate control_id if not provided.
+     * Boot the model and register observers.
      */
-    public function fill(array $attributes): static
+    protected static function boot(): void
     {
-        // Auto-generate control_id before filling if not provided
-        if (!isset($attributes['control_id']) && !$this->exists) {
-            $attributes['control_id'] = static::generateControlId();
-        }
+        parent::boot();
 
-        return parent::fill($attributes);
+        static::observe(\AssurKit\Observers\ControlObserver::class);
     }
 
     public function risks(): BelongsToMany
@@ -58,24 +55,6 @@ class Control extends Model
     public function activeTests(): HasMany
     {
         return $this->tests()->whereIn('status', ['Planned', 'In Progress', 'Submitted', 'In Review']);
-    }
-
-    public static function generateControlId(): string
-    {
-        $lastControl = static::orderBy('control_id', 'desc')->first();
-
-        if (!$lastControl || !$lastControl->control_id) {
-            return 'CTL-001';
-        }
-
-        // Extract number from control_id like CTL-001
-        if (preg_match('/CTL-(\d+)/', $lastControl->control_id, $matches)) {
-            $nextNumber = intval($matches[1]) + 1;
-
-            return 'CTL-' . str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
-        }
-
-        return 'CTL-001';
     }
 
     public static function getAvailableTypes(): array

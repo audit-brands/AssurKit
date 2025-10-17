@@ -78,7 +78,8 @@ export function IssueForm({
   const [tagInput, setTagInput] = useState('')
   const isEditing = !!issue
 
-  const { data: controls } = useControls()
+  const { data: controlsData } = useControls({ limit: 100 })
+  const controls = controlsData?.items ?? []
   const { data: testExecutions } = useTestExecutions()
   const { data: users } = useUsers()
 

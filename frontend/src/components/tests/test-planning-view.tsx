@@ -93,7 +93,8 @@ export function TestPlanningView({ showNewDialog, onCloseNewDialog }: TestPlanni
   })
 
   const { data: testPlans, isLoading } = useTestPlans(selectedControlId)
-  const { data: controls } = useControls()
+  const { data: controlsData } = useControls({ limit: 100 })
+  const controls = controlsData?.items ?? []
   const createTestPlan = useCreateTestPlan()
   const updateTestPlan = useUpdateTestPlan()
   const deleteTestPlan = useDeleteTestPlan()

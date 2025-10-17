@@ -1,11 +1,12 @@
-import { useControls, type Control } from '@/hooks/use-controls'
+import { useControls, type ControlSummary } from '@/hooks/use-controls'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { EffectivenessMatrix, type EffectivenessLevel, type TrendDirection } from './effectiveness-indicator'
 import { TrendingUp, Shield, AlertTriangle } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 export function EffectivenessSummary() {
-  const { data: controls, isLoading } = useControls()
+  const { data, isLoading } = useControls({ limit: 100 })
+  const controls = data?.items ?? []
 
   if (isLoading) {
     return (
@@ -18,7 +19,7 @@ export function EffectivenessSummary() {
     )
   }
 
-  if (!controls || controls.length === 0) {
+  if (controls.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -183,14 +184,14 @@ function getEffectivenessScore(status?: string): number {
   }
 }
 
-function getControlTrend(_control: Control): TrendDirection {
+function getControlTrend(_control: ControlSummary): TrendDirection {
   // This would typically come from historical data
   // For now, return stable for all
   return 'stable'
 }
 
 
-function calculateHealthScore(controls: Control[]): number {
+function calculateHealthScore(controls: ControlSummary[]): number {
   if (controls.length === 0) return 0
 
   const scores = controls.map(control => {

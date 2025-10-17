@@ -1,0 +1,244 @@
+﻿2025-10-15T13:38:28.7755045Z Current runner version: '2.328.0'
+2025-10-15T13:38:28.7781216Z ##[group]Runner Image Provisioner
+2025-10-15T13:38:28.7782619Z Hosted Compute Agent
+2025-10-15T13:38:28.7783420Z Version: 20250912.392
+2025-10-15T13:38:28.7784385Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+2025-10-15T13:38:28.7785390Z Build Date: 2025-09-12T15:23:14Z
+2025-10-15T13:38:28.7786427Z ##[endgroup]
+2025-10-15T13:38:28.7787221Z ##[group]Operating System
+2025-10-15T13:38:28.7788041Z Ubuntu
+2025-10-15T13:38:28.7788820Z 24.04.3
+2025-10-15T13:38:28.7789541Z LTS
+2025-10-15T13:38:28.7790230Z ##[endgroup]
+2025-10-15T13:38:28.7791098Z ##[group]Runner Image
+2025-10-15T13:38:28.7792224Z Image: ubuntu-24.04
+2025-10-15T13:38:28.7793009Z Version: 20250929.60.1
+2025-10-15T13:38:28.7794838Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+2025-10-15T13:38:28.7797481Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+2025-10-15T13:38:28.7799287Z ##[endgroup]
+2025-10-15T13:38:28.7801183Z ##[group]GITHUB_TOKEN Permissions
+2025-10-15T13:38:28.7804126Z Contents: read
+2025-10-15T13:38:28.7804925Z Metadata: read
+2025-10-15T13:38:28.7805657Z Packages: read
+2025-10-15T13:38:28.7806654Z ##[endgroup]
+2025-10-15T13:38:28.7809545Z Secret source: Actions
+2025-10-15T13:38:28.7810712Z Prepare workflow directory
+2025-10-15T13:38:28.8262701Z Prepare all required actions
+2025-10-15T13:38:28.8317546Z Getting action download info
+2025-10-15T13:38:29.1514069Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-10-15T13:38:29.3157938Z Download action repository 'dorny/paths-filter@v2' (SHA:4512585405083f25c027a35db413c2b3b9006d50)
+2025-10-15T13:38:29.5858370Z Complete job name: Detect Changes
+2025-10-15T13:38:29.6603266Z ##[group]Run actions/checkout@v4
+2025-10-15T13:38:29.6604101Z with:
+2025-10-15T13:38:29.6604504Z   repository: audit-brands/AssurKit
+2025-10-15T13:38:29.6605165Z   token: ***
+2025-10-15T13:38:29.6605573Z   ssh-strict: true
+2025-10-15T13:38:29.6605976Z   ssh-user: git
+2025-10-15T13:38:29.6606380Z   persist-credentials: true
+2025-10-15T13:38:29.6606841Z   clean: true
+2025-10-15T13:38:29.6607247Z   sparse-checkout-cone-mode: true
+2025-10-15T13:38:29.6607733Z   fetch-depth: 1
+2025-10-15T13:38:29.6608128Z   fetch-tags: false
+2025-10-15T13:38:29.6608529Z   show-progress: true
+2025-10-15T13:38:29.6608936Z   lfs: false
+2025-10-15T13:38:29.6609305Z   submodules: false
+2025-10-15T13:38:29.6609710Z   set-safe-directory: true
+2025-10-15T13:38:29.6610339Z ##[endgroup]
+2025-10-15T13:38:29.7659021Z Syncing repository: audit-brands/AssurKit
+2025-10-15T13:38:29.7660664Z ##[group]Getting Git version info
+2025-10-15T13:38:29.7661419Z Working directory is '/home/runner/work/AssurKit/AssurKit'
+2025-10-15T13:38:29.7663129Z [command]/usr/bin/git version
+2025-10-15T13:38:29.7794824Z git version 2.51.0
+2025-10-15T13:38:29.7822058Z ##[endgroup]
+2025-10-15T13:38:29.7836682Z Temporarily overriding HOME='/home/runner/work/_temp/4a04e074-aeef-4e79-b485-d2e55ddcd848' before making global git config changes
+2025-10-15T13:38:29.7839403Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-15T13:38:29.7841941Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AssurKit/AssurKit
+2025-10-15T13:38:29.7881296Z Deleting the contents of '/home/runner/work/AssurKit/AssurKit'
+2025-10-15T13:38:29.7884320Z ##[group]Initializing the repository
+2025-10-15T13:38:29.7888512Z [command]/usr/bin/git init /home/runner/work/AssurKit/AssurKit
+2025-10-15T13:38:29.8003958Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-15T13:38:29.8005661Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-15T13:38:29.8007213Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-15T13:38:29.8008328Z hint:
+2025-10-15T13:38:29.8009062Z hint: 	git config --global init.defaultBranch <name>
+2025-10-15T13:38:29.8010326Z hint:
+2025-10-15T13:38:29.8010905Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-15T13:38:29.8012032Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-15T13:38:29.8012810Z hint:
+2025-10-15T13:38:29.8013240Z hint: 	git branch -m <name>
+2025-10-15T13:38:29.8013687Z hint:
+2025-10-15T13:38:29.8014266Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-15T13:38:29.8015245Z Initialized empty Git repository in /home/runner/work/AssurKit/AssurKit/.git/
+2025-10-15T13:38:29.8026638Z [command]/usr/bin/git remote add origin https://github.com/audit-brands/AssurKit
+2025-10-15T13:38:29.8070596Z ##[endgroup]
+2025-10-15T13:38:29.8071441Z ##[group]Disabling automatic garbage collection
+2025-10-15T13:38:29.8077640Z [command]/usr/bin/git config --local gc.auto 0
+2025-10-15T13:38:29.8112551Z ##[endgroup]
+2025-10-15T13:38:29.8113304Z ##[group]Setting up auth
+2025-10-15T13:38:29.8124099Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-15T13:38:29.8159764Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-15T13:38:29.8516616Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-15T13:38:29.8548883Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-15T13:38:29.8772881Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-10-15T13:38:29.8809133Z ##[endgroup]
+2025-10-15T13:38:29.8810533Z ##[group]Fetching the repository
+2025-10-15T13:38:29.8818802Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a6ee11ff788132f3a5639cdff0af94d743532417:refs/remotes/origin/development
+2025-10-15T13:38:30.1463732Z From https://github.com/audit-brands/AssurKit
+2025-10-15T13:38:30.1465132Z  * [new ref]         a6ee11ff788132f3a5639cdff0af94d743532417 -> origin/development
+2025-10-15T13:38:30.1493790Z ##[endgroup]
+2025-10-15T13:38:30.1495140Z ##[group]Determining the checkout info
+2025-10-15T13:38:30.1496701Z ##[endgroup]
+2025-10-15T13:38:30.1502112Z [command]/usr/bin/git sparse-checkout disable
+2025-10-15T13:38:30.1542321Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-10-15T13:38:30.1569487Z ##[group]Checking out the ref
+2025-10-15T13:38:30.1574074Z [command]/usr/bin/git checkout --progress --force -B development refs/remotes/origin/development
+2025-10-15T13:38:30.1758694Z Switched to a new branch 'development'
+2025-10-15T13:38:30.1760972Z branch 'development' set up to track 'origin/development'.
+2025-10-15T13:38:30.1767736Z ##[endgroup]
+2025-10-15T13:38:30.1802406Z [command]/usr/bin/git log -1 --format=%H
+2025-10-15T13:38:30.1823810Z a6ee11ff788132f3a5639cdff0af94d743532417
+2025-10-15T13:38:30.2036721Z ##[group]Run dorny/paths-filter@v2
+2025-10-15T13:38:30.2037309Z with:
+2025-10-15T13:38:30.2037838Z   filters: frontend:
+  - 'frontend/**'
+backend:
+  - 'api/**'
+  
+
+2025-10-15T13:38:30.2038630Z   token: ***
+2025-10-15T13:38:30.2039015Z   list-files: none
+2025-10-15T13:38:30.2039444Z   initial-fetch-depth: 100
+2025-10-15T13:38:30.2039893Z ##[endgroup]
+2025-10-15T13:38:30.2973080Z ##[group]Get current git ref
+2025-10-15T13:38:30.3008333Z [command]/usr/bin/git branch --show-current
+2025-10-15T13:38:30.3046841Z development
+2025-10-15T13:38:30.3070306Z ##[endgroup]
+2025-10-15T13:38:30.3071437Z Changes will be detected between main and development
+2025-10-15T13:38:30.3074034Z ##[group]Searching for merge-base main...development
+2025-10-15T13:38:30.3088860Z [command]/usr/bin/git show-ref main
+2025-10-15T13:38:30.3128323Z [command]/usr/bin/git show-ref development
+2025-10-15T13:38:30.3151226Z a6ee11ff788132f3a5639cdff0af94d743532417 refs/heads/development
+2025-10-15T13:38:30.3153738Z a6ee11ff788132f3a5639cdff0af94d743532417 refs/remotes/origin/development
+2025-10-15T13:38:30.3171066Z [command]/usr/bin/git fetch --no-tags --depth=100 origin main development
+2025-10-15T13:38:30.6748775Z From https://github.com/audit-brands/AssurKit
+2025-10-15T13:38:30.6749812Z  * branch            main       -> FETCH_HEAD
+2025-10-15T13:38:30.6750712Z  * branch            development -> FETCH_HEAD
+2025-10-15T13:38:30.6751617Z  * [new branch]      main       -> origin/main
+2025-10-15T13:38:30.6787424Z [command]/usr/bin/git show-ref main
+2025-10-15T13:38:30.6812885Z 244bc6e20e3378263c2db2ff6ba5808f6b57a077 refs/remotes/origin/main
+2025-10-15T13:38:30.6831918Z [command]/usr/bin/git rev-list --count --all
+2025-10-15T13:38:30.6860707Z 66
+2025-10-15T13:38:30.6886838Z [command]/usr/bin/git merge-base refs/remotes/origin/main refs/remotes/origin/development
+2025-10-15T13:38:30.6914198Z bbf21a76af1decef0f85af366198366abcafa662
+2025-10-15T13:38:30.6920250Z ##[endgroup]
+2025-10-15T13:38:30.6922579Z ##[group]Change detection refs/remotes/origin/main...refs/remotes/origin/development
+2025-10-15T13:38:30.6935434Z [command]/usr/bin/git diff --no-renames --name-status -z refs/remotes/origin/main...refs/remotes/origin/development
+2025-10-15T13:38:30.7060229Z M .github/workflows/ci.yml M .github/workflows/pr-frontend.yml M README.md M frontend/eslint.config.js M frontend/package-lock.json M frontend/package.json M frontend/src/App.tsx A frontend/src/__tests__/admin-integration.test.tsx A frontend/src/__tests__/integration.test.tsx A frontend/src/__tests__/reporting-integration.test.tsx A frontend/src/components/admin/__tests__/admin-dashboard.test.tsx A frontend/src/components/admin/__tests__/admin-integration.test.tsx A frontend/src/components/admin/__tests__/policies-management.test.tsx A frontend/src/components/admin/__tests__/roles-permissions.test.tsx A frontend/src/components/admin/__tests__/user-management.test.tsx A frontend/src/components/admin/admin-dashboard.tsx A frontend/src/components/admin/admin-layout.tsx A frontend/src/components/admin/audit-monitoring.tsx A frontend/src/components/admin/audit-trail.tsx A frontend/src/components/admin/policies-management.tsx A frontend/src/components/admin/policies-workflows.tsx A frontend/src/components/admin/roles-permissions.tsx A frontend/src/components/admin/user-management.tsx A frontend/src/components/admin/workflow-designer.tsx A frontend/src/components/assignments/assignment-form.tsx A frontend/src/components/assignments/assignment-list.tsx A frontend/src/components/dashboard/audit-readiness-report.tsx A frontend/src/components/dashboard/compliance-health-check.tsx A frontend/src/components/dashboard/dashboard-filters.tsx A frontend/src/components/dashboard/executive-overview.tsx A frontend/src/components/evidence/evidence-list.tsx A frontend/src/components/evidence/evidence-preview.tsx A frontend/src/components/evidence/evidence-search.tsx A frontend/src/components/evidence/evidence-statistics.tsx A frontend/src/components/evidence/evidence-upload.tsx A frontend/src/components/issues/issue-details.tsx A frontend/src/components/issues/issue-form.tsx A frontend/src/components/issues/issue-list.tsx A frontend/src/components/issues/issue-search.tsx A frontend/src/components/issues/issue-statistics.tsx M frontend/src/components/layout/main-layout.tsx A frontend/src/components/notifications/notification-center.tsx A frontend/src/components/reporting/__tests__/advanced-filters.test.tsx A frontend/src/components/reporting/__tests__/exception-heatmap.test.tsx A frontend/src/components/reporting/__tests__/export-center.test.tsx A frontend/src/components/reporting/__tests__/period-comparison.test.tsx A frontend/src/components/reporting/__tests__/simplified-component.test.tsx A frontend/src/components/reporting/advanced-filters.tsx A frontend/src/components/reporting/exception-heatmap.tsx A frontend/src/components/reporting/export-center.tsx A frontend/src/components/reporting/period-comparison.tsx A frontend/src/components/reviews/review-details.tsx A frontend/src/components/reviews/review-form.tsx A frontend/src/components/reviews/review-list.tsx M frontend/src/components/ui/button.tsx A frontend/src/components/ui/calendar.tsx A frontend/src/components/ui/collapsible.tsx A frontend/src/components/ui/dropdown-menu.tsx A frontend/src/components/ui/form.tsx A frontend/src/components/ui/popover.tsx A frontend/src/components/ui/scroll-area.tsx A frontend/src/components/ui/separator.tsx A frontend/src/components/ui/skeleton.tsx A frontend/src/components/ui/switch.tsx A frontend/src/hooks/use-dashboard.ts A frontend/src/hooks/use-evidence.ts A frontend/src/hooks/use-issues.ts A frontend/src/hooks/use-notifications.ts A frontend/src/hooks/use-reviews.ts A frontend/src/hooks/use-toast.ts A frontend/src/hooks/use-users.ts A frontend/src/pages/assignments.tsx M frontend/src/pages/dashboard.tsx A frontend/src/pages/evidence.tsx A frontend/src/pages/issues.tsx A frontend/src/pages/reviews.tsx A frontend/src/test-setup.ts A frontend/src/test/setup.ts A frontend/src/test/test-utils.tsx A frontend/src/utils/__tests__/date-utils.test.ts A frontend/src/utils/__tests__/reporting-utils.test.ts A frontend/src/utils/__tests__/review-utils.test.ts M frontend/vite.config.ts A frontend/vitest.config.ci.ts A frontend/vitest.config.ts 
+2025-10-15T13:38:30.7128302Z ##[endgroup]
+2025-10-15T13:38:30.7129141Z Detected 85 changed files
+2025-10-15T13:38:30.7129983Z Results:
+2025-10-15T13:38:30.7131270Z ##[group]Filter frontend = true
+2025-10-15T13:38:30.7132328Z Matching files:
+2025-10-15T13:38:30.7133144Z frontend/eslint.config.js [modified]
+2025-10-15T13:38:30.7134234Z frontend/package-lock.json [modified]
+2025-10-15T13:38:30.7135303Z frontend/package.json [modified]
+2025-10-15T13:38:30.7136465Z frontend/src/App.tsx [modified]
+2025-10-15T13:38:30.7137924Z frontend/src/__tests__/admin-integration.test.tsx [added]
+2025-10-15T13:38:30.7139651Z frontend/src/__tests__/integration.test.tsx [added]
+2025-10-15T13:38:30.7141442Z frontend/src/__tests__/reporting-integration.test.tsx [added]
+2025-10-15T13:38:30.7143953Z frontend/src/components/admin/__tests__/admin-dashboard.test.tsx [added]
+2025-10-15T13:38:30.7146342Z frontend/src/components/admin/__tests__/admin-integration.test.tsx [added]
+2025-10-15T13:38:30.7148762Z frontend/src/components/admin/__tests__/policies-management.test.tsx [added]
+2025-10-15T13:38:30.7151216Z frontend/src/components/admin/__tests__/roles-permissions.test.tsx [added]
+2025-10-15T13:38:30.7153821Z frontend/src/components/admin/__tests__/user-management.test.tsx [added]
+2025-10-15T13:38:30.7155962Z frontend/src/components/admin/admin-dashboard.tsx [added]
+2025-10-15T13:38:30.7157794Z frontend/src/components/admin/admin-layout.tsx [added]
+2025-10-15T13:38:30.7159651Z frontend/src/components/admin/audit-monitoring.tsx [added]
+2025-10-15T13:38:30.7161494Z frontend/src/components/admin/audit-trail.tsx [added]
+2025-10-15T13:38:30.7163568Z frontend/src/components/admin/policies-management.tsx [added]
+2025-10-15T13:38:30.7165594Z frontend/src/components/admin/policies-workflows.tsx [added]
+2025-10-15T13:38:30.7167752Z frontend/src/components/admin/roles-permissions.tsx [added]
+2025-10-15T13:38:30.7169687Z frontend/src/components/admin/user-management.tsx [added]
+2025-10-15T13:38:30.7171613Z frontend/src/components/admin/workflow-designer.tsx [added]
+2025-10-15T13:38:30.7173802Z frontend/src/components/assignments/assignment-form.tsx [added]
+2025-10-15T13:38:30.7175891Z frontend/src/components/assignments/assignment-list.tsx [added]
+2025-10-15T13:38:30.7178067Z frontend/src/components/dashboard/audit-readiness-report.tsx [added]
+2025-10-15T13:38:30.7180335Z frontend/src/components/dashboard/compliance-health-check.tsx [added]
+2025-10-15T13:38:30.7182602Z frontend/src/components/dashboard/dashboard-filters.tsx [added]
+2025-10-15T13:38:30.7184706Z frontend/src/components/dashboard/executive-overview.tsx [added]
+2025-10-15T13:38:30.7186728Z frontend/src/components/evidence/evidence-list.tsx [added]
+2025-10-15T13:38:30.7188687Z frontend/src/components/evidence/evidence-preview.tsx [added]
+2025-10-15T13:38:30.7190828Z frontend/src/components/evidence/evidence-search.tsx [added]
+2025-10-15T13:38:30.7192919Z frontend/src/components/evidence/evidence-statistics.tsx [added]
+2025-10-15T13:38:30.7194886Z frontend/src/components/evidence/evidence-upload.tsx [added]
+2025-10-15T13:38:30.7196719Z frontend/src/components/issues/issue-details.tsx [added]
+2025-10-15T13:38:30.7198419Z frontend/src/components/issues/issue-form.tsx [added]
+2025-10-15T13:38:30.7200052Z frontend/src/components/issues/issue-list.tsx [added]
+2025-10-15T13:38:30.7201814Z frontend/src/components/issues/issue-search.tsx [added]
+2025-10-15T13:38:30.7203555Z frontend/src/components/issues/issue-statistics.tsx [added]
+2025-10-15T13:38:30.7205346Z frontend/src/components/layout/main-layout.tsx [modified]
+2025-10-15T13:38:30.7207306Z frontend/src/components/notifications/notification-center.tsx [added]
+2025-10-15T13:38:30.7209602Z frontend/src/components/reporting/__tests__/advanced-filters.test.tsx [added]
+2025-10-15T13:38:30.7212074Z frontend/src/components/reporting/__tests__/exception-heatmap.test.tsx [added]
+2025-10-15T13:38:30.7214438Z frontend/src/components/reporting/__tests__/export-center.test.tsx [added]
+2025-10-15T13:38:30.7216793Z frontend/src/components/reporting/__tests__/period-comparison.test.tsx [added]
+2025-10-15T13:38:30.7219244Z frontend/src/components/reporting/__tests__/simplified-component.test.tsx [added]
+2025-10-15T13:38:30.7221461Z frontend/src/components/reporting/advanced-filters.tsx [added]
+2025-10-15T13:38:30.7223506Z frontend/src/components/reporting/exception-heatmap.tsx [added]
+2025-10-15T13:38:30.7225424Z frontend/src/components/reporting/export-center.tsx [added]
+2025-10-15T13:38:30.7227342Z frontend/src/components/reporting/period-comparison.tsx [added]
+2025-10-15T13:38:30.7229236Z frontend/src/components/reviews/review-details.tsx [added]
+2025-10-15T13:38:30.7230972Z frontend/src/components/reviews/review-form.tsx [added]
+2025-10-15T13:38:30.7232736Z frontend/src/components/reviews/review-list.tsx [added]
+2025-10-15T13:38:30.7234334Z frontend/src/components/ui/button.tsx [modified]
+2025-10-15T13:38:30.7235815Z frontend/src/components/ui/calendar.tsx [added]
+2025-10-15T13:38:30.7237315Z frontend/src/components/ui/collapsible.tsx [added]
+2025-10-15T13:38:30.7238869Z frontend/src/components/ui/dropdown-menu.tsx [added]
+2025-10-15T13:38:30.7240356Z frontend/src/components/ui/form.tsx [added]
+2025-10-15T13:38:30.7241833Z frontend/src/components/ui/popover.tsx [added]
+2025-10-15T13:38:30.7243319Z frontend/src/components/ui/scroll-area.tsx [added]
+2025-10-15T13:38:30.7244813Z frontend/src/components/ui/separator.tsx [added]
+2025-10-15T13:38:30.7246295Z frontend/src/components/ui/skeleton.tsx [added]
+2025-10-15T13:38:30.7247734Z frontend/src/components/ui/switch.tsx [added]
+2025-10-15T13:38:30.7249152Z frontend/src/hooks/use-dashboard.ts [added]
+2025-10-15T13:38:30.7250494Z frontend/src/hooks/use-evidence.ts [added]
+2025-10-15T13:38:30.7251905Z frontend/src/hooks/use-issues.ts [added]
+2025-10-15T13:38:30.7253428Z frontend/src/hooks/use-notifications.ts [added]
+2025-10-15T13:38:30.7254848Z frontend/src/hooks/use-reviews.ts [added]
+2025-10-15T13:38:30.7256156Z frontend/src/hooks/use-toast.ts [added]
+2025-10-15T13:38:30.7257427Z frontend/src/hooks/use-users.ts [added]
+2025-10-15T13:38:30.7258742Z frontend/src/pages/assignments.tsx [added]
+2025-10-15T13:38:30.7260101Z frontend/src/pages/dashboard.tsx [modified]
+2025-10-15T13:38:30.7261441Z frontend/src/pages/evidence.tsx [added]
+2025-10-15T13:38:30.7262817Z frontend/src/pages/issues.tsx [added]
+2025-10-15T13:38:30.7264065Z frontend/src/pages/reviews.tsx [added]
+2025-10-15T13:38:30.7265318Z frontend/src/test-setup.ts [added]
+2025-10-15T13:38:30.7266518Z frontend/src/test/setup.ts [added]
+2025-10-15T13:38:30.7267737Z frontend/src/test/test-utils.tsx [added]
+2025-10-15T13:38:30.7269183Z frontend/src/utils/__tests__/date-utils.test.ts [added]
+2025-10-15T13:38:30.7270900Z frontend/src/utils/__tests__/reporting-utils.test.ts [added]
+2025-10-15T13:38:30.7273019Z frontend/src/utils/__tests__/review-utils.test.ts [added]
+2025-10-15T13:38:30.7274788Z frontend/vite.config.ts [modified]
+2025-10-15T13:38:30.7276211Z frontend/vitest.config.ci.ts [added]
+2025-10-15T13:38:30.7277406Z frontend/vitest.config.ts [added]
+2025-10-15T13:38:30.7279080Z ##[endgroup]
+2025-10-15T13:38:30.7280523Z ##[group]Filter backend = false
+2025-10-15T13:38:30.7281567Z Matching files: none
+2025-10-15T13:38:30.7283119Z ##[endgroup]
+2025-10-15T13:38:30.7284021Z Changes output set to ["frontend"]
+2025-10-15T13:38:30.7476199Z Post job cleanup.
+2025-10-15T13:38:30.8416677Z [command]/usr/bin/git version
+2025-10-15T13:38:30.8452184Z git version 2.51.0
+2025-10-15T13:38:30.8498675Z Temporarily overriding HOME='/home/runner/work/_temp/6801c6ac-40e9-410b-8d65-2323bf7c5a38' before making global git config changes
+2025-10-15T13:38:30.8503924Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-15T13:38:30.8507860Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AssurKit/AssurKit
+2025-10-15T13:38:30.8549463Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-15T13:38:30.8587095Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-15T13:38:30.8836639Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-15T13:38:30.8860087Z http.https://github.com/.extraheader
+2025-10-15T13:38:30.8874540Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-10-15T13:38:30.8906233Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-15T13:38:30.9264655Z Evaluate and set job outputs
+2025-10-15T13:38:30.9277407Z Set output 'frontend'
+2025-10-15T13:38:30.9281137Z Set output 'backend'
+2025-10-15T13:38:30.9284410Z Cleaning up orphan processes

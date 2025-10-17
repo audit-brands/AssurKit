@@ -1,30 +1,67 @@
-import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api-client'
+import type { PaginatedResult, PaginationMetadata } from '@/lib/pagination'
+import { normalizeLimit, normalizePage } from '@/lib/pagination'
 
 export type ControlAutomation = 'Manual' | 'Semi-Automated' | 'Automated'
 export type ControlFrequency = 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual' | 'Ad-hoc'
 export type ControlType = 'Preventive' | 'Detective' | 'Corrective'
 export type ControlStatus = 'Draft' | 'Active' | 'Retired'
 
-export interface Control {
+export interface ControlSummary {
   id: string
-  risk_id?: string
-  risk_ids: string[]
   control_name: string
+  business_id?: string
   control_type: ControlType
   frequency: ControlFrequency
   automation: ControlAutomation
   key_control: boolean
-  description?: string
   owner?: string
   reviewer?: string
-  testing_procedures?: string
-  metadata?: Record<string, unknown>
   status: ControlStatus
   created_at: string
   updated_at: string
-  business_id?: string
+  risk_count: number
+  frequency_weight?: number
+  automation_score?: number
+}
+
+export interface ControlRisk {
+  id: string
+  name: string
+  subprocess: {
+    id: string
+    name: string
+    process: {
+      id: string
+      name: string
+      company: {
+        id: string
+        name: string
+      }
+    }
+  }
+}
+
+export interface ControlDetail extends ControlSummary {
+  description?: string
+  owner?: string
+  reviewer?: string
+  metadata?: Record<string, unknown>
+  testing_procedures?: string
+  status: ControlStatus
+  risks: ControlRisk[]
+}
+
+export interface ControlListParams {
+  page?: number
+  limit?: number
+  search?: string
+  riskId?: string
+  controlType?: ControlType
+  automation?: ControlAutomation
+  status?: ControlStatus
+  isKeyControl?: boolean
 }
 
 export interface CreateControlData {
@@ -48,38 +85,48 @@ export interface UpdateControlData extends CreateControlData {
 
 interface ApiControlSummary {
   id: string
-  control_id: string
+  control_id: string | null
   name: string
-  description: string
+  description: string | null
   control_type: string
   frequency: string
   automation_level: string
   is_key_control: boolean
-  owner_email: string
-  reviewer_email?: string | null
+  owner_email: string | null
+  reviewer_email: string | null
   status: string
   created_at: string
   updated_at?: string
   metadata?: Record<string, unknown> | null
+  frequency_weight?: number
+  automation_score?: number
+  risks_count?: number
 }
 
 interface ApiControlDetail extends ApiControlSummary {
-  evidence_requirements?: unknown
+  evidence_requirements?: string | null
   risks?: Array<{
     id: string
-  }>
-}
-
-interface ApiRiskControlMatrixItem {
-  risk_id: string
-  controls: Array<{
-    control_id: string
+    name: string
+    subprocess: {
+      id: string
+      name: string
+      process: {
+        id: string
+        name: string
+        company: {
+          id: string
+          name: string
+        }
+      }
+    }
   }>
 }
 
 const automationMap: Record<string, ControlAutomation> = {
   Manual: 'Manual',
   'Semi-automated': 'Semi-Automated',
+  'Semi-Automated': 'Semi-Automated',
   Automated: 'Automated',
 }
 
@@ -89,178 +136,144 @@ const reverseAutomationMap: Record<ControlAutomation, string> = {
   Automated: 'Automated',
 }
 
-const mapApiControlToControl = (control: ApiControlSummary | ApiControlDetail, riskIds: string[]): Control => {
-  const metadata = control.metadata ?? undefined
+const mapApiControlSummary = (control: ApiControlSummary): ControlSummary => ({
+  id: control.id,
+  control_name: control.name,
+  business_id: control.control_id ?? undefined,
+  control_type: (control.control_type ?? 'Preventive') as ControlType,
+  frequency: (control.frequency ?? 'Monthly') as ControlFrequency,
+  automation: automationMap[control.automation_level] ?? 'Manual',
+  key_control: !!control.is_key_control,
+  owner: control.owner_email ?? undefined,
+  reviewer: control.reviewer_email ?? undefined,
+  status: (control.status ?? 'Draft') as ControlStatus,
+  created_at: control.created_at,
+  updated_at: control.updated_at ?? control.created_at,
+  risk_count: control.risks_count ?? 0,
+  frequency_weight: control.frequency_weight,
+  automation_score: control.automation_score,
+})
 
-  return {
-    id: control.id,
-    risk_id: riskIds[0],
-    risk_ids: riskIds,
-    control_name: control.name,
-    control_type: (control.control_type ?? 'Preventive') as ControlType,
-    frequency: (control.frequency ?? 'Monthly') as ControlFrequency,
-    automation: automationMap[control.automation_level] ?? 'Manual',
-    key_control: !!control.is_key_control,
-    description: control.description ?? undefined,
-    owner: control.owner_email ?? undefined,
-    reviewer: control.reviewer_email ?? undefined,
-    metadata,
-    status: (control.status ?? 'Draft') as ControlStatus,
-    created_at: control.created_at,
-    updated_at: control.updated_at ?? control.created_at,
-    business_id: control.control_id ?? undefined,
-  }
-}
+const mapApiControlDetail = (control: ApiControlDetail): ControlDetail => ({
+  ...mapApiControlSummary(control),
+  description: control.description ?? undefined,
+  metadata: control.metadata ?? undefined,
+  testing_procedures: control.evidence_requirements ?? undefined,
+  risks: (control.risks ?? []).map(risk => ({
+    id: risk.id,
+    name: risk.name,
+    subprocess: risk.subprocess,
+  })),
+})
 
-const loadControls = async (): Promise<Control[]> => {
-  const [controlsResponse, rcmResponse] = await Promise.all([
-    api.get('/api/controls', { params: { limit: 1000 } }),
-    api.get('/api/risk-control-matrix', { params: { limit: 1000 } }),
-  ])
-
-  const controlItems = (controlsResponse.data?.data ?? []) as ApiControlSummary[]
-  const rcmItems = (rcmResponse.data?.data ?? []) as ApiRiskControlMatrixItem[]
-
-  const controlRiskMap = new Map<string, Set<string>>()
-  rcmItems.forEach(item => {
-    item.controls.forEach(control => {
-      if (!controlRiskMap.has(control.control_id)) {
-        controlRiskMap.set(control.control_id, new Set<string>())
-      }
-      controlRiskMap.get(control.control_id)!.add(item.risk_id)
-    })
-  })
-
-  return controlItems.map(control => {
-    const riskIds = Array.from(controlRiskMap.get(control.id) ?? [])
-    return mapApiControlToControl(control, riskIds)
-  })
-}
-
-const buildControlPayload = (data: Partial<CreateControlData>): Record<string, unknown> => {
+const buildControlPayload = (data: Partial<CreateControlData | UpdateControlData>) => {
   const payload: Record<string, unknown> = {}
 
-  if (data.control_name !== undefined) {
-    payload.name = data.control_name
-  }
-
-  if (data.description !== undefined) {
-    payload.description = data.description
-  }
-
-  if (data.control_type !== undefined) {
-    payload.control_type = data.control_type
-  }
-
-  if (data.frequency !== undefined) {
-    payload.frequency = data.frequency
-  }
-
-  if (data.automation !== undefined) {
-    payload.automation_level = reverseAutomationMap[data.automation]
-  }
-
-  if (data.key_control !== undefined) {
-    payload.is_key_control = data.key_control
-  }
-
-  if (data.owner !== undefined) {
-    payload.owner_email = data.owner
-  }
-
-  if (data.reviewer !== undefined) {
-    payload.reviewer_email = data.reviewer
-  }
-
-  if (data.metadata !== undefined) {
-    payload.metadata = data.metadata
-  }
-
-  if (data.status !== undefined) {
-    payload.status = data.status
-  }
+  if (data.control_name !== undefined) payload.name = data.control_name
+  if (data.control_type !== undefined) payload.control_type = data.control_type
+  if (data.frequency !== undefined) payload.frequency = data.frequency
+  if (data.automation !== undefined) payload.automation_level = reverseAutomationMap[data.automation]
+  if (data.key_control !== undefined) payload.is_key_control = data.key_control
+  if (data.description !== undefined) payload.description = data.description
+  if (data.owner !== undefined) payload.owner_email = data.owner
+  if (data.reviewer !== undefined) payload.reviewer_email = data.reviewer
+  if (data.testing_procedures !== undefined) payload.evidence_requirements = data.testing_procedures
+  if (data.metadata !== undefined) payload.metadata = data.metadata
+  if (data.status !== undefined) payload.status = data.status
 
   return payload
 }
 
-// Fetch all controls
-export function useControls() {
+export function useControls(params: ControlListParams = {}) {
+  const page = normalizePage(params.page)
+  const limit = normalizeLimit(params.limit)
+  const search = params.search?.trim() || undefined
+  const riskId = params.riskId
+  const controlType = params.controlType
+  const automation = params.automation
+  const status = params.status
+  const isKeyControl = params.isKeyControl
+
   return useQuery({
-    queryKey: ['controls'],
-    queryFn: loadControls,
-  })
-}
+    queryKey: ['controls', page, limit, search, riskId, controlType, automation, status, isKeyControl],
+    queryFn: async (): Promise<PaginatedResult<ControlSummary>> => {
+      const response = await api.get('/api/controls', {
+        params: {
+          page,
+          limit,
+          search,
+          risk_id: riskId,
+          control_type: controlType,
+          automation_level: automation ? reverseAutomationMap[automation] : undefined,
+          status,
+          is_key_control: typeof isKeyControl === 'boolean' ? Number(isKeyControl) : undefined,
+        },
+      })
 
-// Fetch controls by risk using cached controls
-export function useControlsByRisk(riskId: string) {
-  const { data, isLoading, error } = useControls()
+      const payload = response.data as { data?: ApiControlSummary[]; pagination?: PaginationMetadata }
+      const items = (payload.data ?? []).map(mapApiControlSummary)
+      const pagination = payload.pagination ?? {
+        page,
+        limit,
+        total: payload.data?.length ?? items.length,
+        pages: Math.max(1, Math.ceil((payload.data?.length ?? items.length) / limit)),
+      }
 
-  const controls = useMemo(() => {
-    if (!data || !riskId) return []
-    return data.filter(control => control.risk_ids.includes(riskId))
-  }, [data, riskId])
-
-  return {
-    data: controls,
-    isLoading,
-    error,
-  }
-}
-
-// Fetch single control
-export function useControl(id: string) {
-  return useQuery({
-    queryKey: ['controls', id],
-    queryFn: async (): Promise<Control> => {
-      const response = await api.get(`/api/controls/${id}`)
-      const control = response.data as ApiControlDetail
-      const riskIds = control.risks?.map(risk => risk.id) ?? []
-      return mapApiControlToControl(control, riskIds)
+      return { items, pagination }
     },
-    enabled: !!id
   })
 }
 
-// Create control mutation
+export function useControlsByRisk(riskId: string, params: Omit<ControlListParams, 'riskId'> = {}) {
+  return useControls({ ...params, riskId })
+}
+
+export function useControl(id: string, options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ['controls', 'detail', id],
+    queryFn: async (): Promise<ControlDetail> => {
+      const response = await api.get(`/api/controls/${id}`)
+      return mapApiControlDetail(response.data as ApiControlDetail)
+    },
+    enabled: options?.enabled ?? !!id,
+  })
+}
+
 export function useCreateControl() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (data: CreateControlData): Promise<Control> => {
+    mutationFn: async (data: CreateControlData): Promise<ControlDetail> => {
       const { risk_id, ...controlData } = data
       const payload = buildControlPayload(controlData)
       const response = await api.post('/api/manage/controls', payload)
-      const apiControl = (response.data?.control ?? response.data) as ApiControlSummary
+      const detail = mapApiControlDetail((response.data?.control ?? response.data) as ApiControlDetail)
 
       if (risk_id) {
         await api.post('/api/manage/risk-control-matrix/assign', {
           risk_id,
-          control_id: apiControl.id,
+          control_id: detail.id,
           effectiveness: 'Not Effective',
         })
       }
 
-      const riskIds = risk_id ? [risk_id] : []
-      return mapApiControlToControl(apiControl, riskIds)
+      await queryClient.invalidateQueries({ queryKey: ['controls'] })
+      await queryClient.invalidateQueries({ queryKey: ['controls', 'detail', detail.id] })
+
+      return detail
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['controls'] })
-    }
   })
 }
 
-// Update control mutation
 export function useUpdateControl() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateControlData }): Promise<Control> => {
+    mutationFn: async ({ id, ...data }: { id: string } & UpdateControlData): Promise<ControlDetail> => {
       const { risk_id, previous_risk_id, ...controlData } = data
       const payload = buildControlPayload(controlData)
       const response = await api.put(`/api/manage/controls/${id}`, payload)
-      const apiControl = (response.data?.control ?? response.data) as ApiControlSummary
-
-      let removedPrevious = false
+      const detail = mapApiControlDetail((response.data?.control ?? response.data) as ApiControlDetail)
 
       if (previous_risk_id && previous_risk_id !== risk_id) {
         await api.delete('/api/manage/risk-control-matrix/remove', {
@@ -269,10 +282,9 @@ export function useUpdateControl() {
             control_id: id,
           },
         })
-        removedPrevious = true
       }
 
-      if (risk_id && (!previous_risk_id || previous_risk_id !== risk_id)) {
+      if (risk_id && risk_id !== previous_risk_id) {
         await api.post('/api/manage/risk-control-matrix/assign', {
           risk_id,
           control_id: id,
@@ -280,42 +292,36 @@ export function useUpdateControl() {
         })
       }
 
-      const resultingRiskIds = new Set<string>()
-      if (risk_id) {
-        resultingRiskIds.add(risk_id)
-      } else if (previous_risk_id && !removedPrevious) {
-        resultingRiskIds.add(previous_risk_id)
-      }
+      await queryClient.invalidateQueries({ queryKey: ['controls'] })
+      await queryClient.invalidateQueries({ queryKey: ['controls', 'detail', id] })
 
-      return mapApiControlToControl(apiControl, Array.from(resultingRiskIds))
+      return detail
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['controls'] })
-    }
   })
 }
 
-// Delete control mutation
 export function useDeleteControl() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ id, risk_ids }: { id: string; risk_ids?: string[] }): Promise<void> => {
-      if (risk_ids && risk_ids.length > 0) {
-        for (const riskId of risk_ids) {
-          await api.delete('/api/manage/risk-control-matrix/remove', {
-            data: {
-              risk_id: riskId,
-              control_id: id,
-            },
-          })
-        }
+    mutationFn: async (id: string): Promise<void> => {
+      const response = await api.get(`/api/controls/${id}`)
+      const detail = mapApiControlDetail(response.data as ApiControlDetail)
+
+      for (const risk of detail.risks) {
+        await api.delete('/api/manage/risk-control-matrix/remove', {
+          data: {
+            risk_id: risk.id,
+            control_id: id,
+          },
+        })
       }
 
       await api.delete(`/api/manage/controls/${id}`)
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['controls'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ['controls', 'detail', id] })
+    },
   })
 }

@@ -52,7 +52,8 @@ export function EvidenceSearch({ onFiltersChange }: EvidenceSearchProps) {
   const [tagInput, setTagInput] = useState('')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
-  const { data: controls } = useControls()
+  const { data: controlsData } = useControls({ limit: 100 })
+  const controls = controlsData?.items ?? []
   const { data: testExecutions } = useTestExecutions()
 
   // Common file types for filtering
