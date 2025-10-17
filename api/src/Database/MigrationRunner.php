@@ -24,8 +24,15 @@ class MigrationRunner
     {
         Connection::getInstance();
 
-        // Load non-namespaced migration files
+        // Load all migration files
         $migrationsDir = __DIR__ . '/Migrations/';
+
+        // Load namespaced migrations (001-003)
+        require_once $migrationsDir . '001_CreateUsersTable.php';
+        require_once $migrationsDir . '002_CreateRolesTable.php';
+        require_once $migrationsDir . '003_CreateUserRolesTable.php';
+
+        // Load non-namespaced migrations (004-011)
         require_once $migrationsDir . '004_create_companies_table.php';
         require_once $migrationsDir . '005_create_processes_table.php';
         require_once $migrationsDir . '006_create_subprocesses_table.php';
