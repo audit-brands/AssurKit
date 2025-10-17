@@ -15,7 +15,7 @@ beforeEach(function () {
 
 test('can generate JWT token for user', function () {
     // Create a mock user with roles
-    $user = Mockery::mock(User::class)->shouldIgnoreMissing();
+    $user = Mockery::mock(User::class)->makePartial();
     $user->id = 'test-user-id';
     $user->email = 'test@example.com';
     $user->name = 'Test User';
@@ -33,7 +33,7 @@ test('can generate JWT token for user', function () {
 
 test('generated token contains correct user data', function () {
     // Create a mock user
-    $user = Mockery::mock(User::class)->shouldIgnoreMissing();
+    $user = Mockery::mock(User::class)->makePartial();
     $user->id = 'test-user-id';
     $user->email = 'test@example.com';
     $user->name = 'Test User';
@@ -79,7 +79,7 @@ test('can validate valid JWT token', function () {
 
 test('validates token has not expired', function () {
     // Token expires in 1 hour
-    $user = Mockery::mock(User::class)->shouldIgnoreMissing();
+    $user = Mockery::mock(User::class)->makePartial();
     $user->id = 'test-id';
     $user->email = 'test@example.com';
     $user->name = 'Test';
@@ -162,7 +162,7 @@ test('returns null for missing Bearer prefix', function () {
 });
 
 test('token expiration time is approximately 1 hour', function () {
-    $user = Mockery::mock(User::class)->shouldIgnoreMissing();
+    $user = Mockery::mock(User::class)->makePartial();
     $user->id = 'test-id';
     $user->email = 'test@example.com';
     $user->name = 'Test';

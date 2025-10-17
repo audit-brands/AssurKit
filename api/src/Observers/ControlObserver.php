@@ -9,14 +9,14 @@ use AssurKit\Models\Control;
 class ControlObserver
 {
     /**
-     * Handle the Control "saving" event.
-     * This fires before the model is saved to the database.
+     * Handle the Control "creating" event.
+     * This fires before a new model is inserted into the database.
      */
-    public function saving(Control $control): void
+    public function creating(Control $control): void
     {
-        // Only generate control_id for new records that don't have one
-        if (!$control->exists && empty($control->control_id)) {
-            $control->control_id = $this->generateControlId();
+        // Only generate control_id if not provided
+        if (empty($control->control_id)) {
+            $control->setAttribute('control_id', $this->generateControlId());
         }
     }
 
