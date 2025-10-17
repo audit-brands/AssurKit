@@ -116,7 +116,7 @@ describe('GET /api/controls/{id}', function () {
     test('returns 404 for non-existent control', function () {
         $token = $this->createUserWithToken('viewer@example.com', 'Viewer', 'password123', 'Viewer');
 
-        $response = $this->get('/api/controls/non-existent-id', $this->authHeader($token));
+        $response = $this->get('/api/controls/00000000-0000-0000-0000-000000000000', $this->authHeader($token));
 
         $data = $this->parseJsonResponse($response);
 

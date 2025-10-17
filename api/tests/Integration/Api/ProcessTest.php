@@ -90,7 +90,7 @@ describe('GET /api/processes/{id}', function () {
     test('returns 404 for non-existent process', function () {
         $token = $this->createUserWithToken('viewer@example.com', 'Viewer', 'password123', 'Viewer');
 
-        $response = $this->get('/api/processes/non-existent-id', $this->authHeader($token));
+        $response = $this->get('/api/processes/00000000-0000-0000-0000-000000000000', $this->authHeader($token));
 
         $data = $this->parseJsonResponse($response);
 

@@ -91,7 +91,7 @@ describe('GET /api/companies/{id}', function () {
     test('returns 404 for non-existent company', function () {
         $token = $this->createUserWithToken('viewer@example.com', 'Viewer', 'password123', 'Viewer');
 
-        $response = $this->get('/api/companies/non-existent-id', $this->authHeader($token));
+        $response = $this->get('/api/companies/00000000-0000-0000-0000-000000000000', $this->authHeader($token));
 
         $data = $this->parseJsonResponse($response);
 

@@ -15,6 +15,7 @@ class CreateUserRolesTable extends Migration
             $table->uuid('user_id');
             $table->uuid('role_id');
             $table->timestamp('assigned_at')->useCurrent();
+            $table->timestamps();
 
             $table->primary(['user_id', 'role_id']);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

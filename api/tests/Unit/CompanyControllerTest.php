@@ -179,7 +179,7 @@ describe('CompanyController::show', function () {
         $response = $this->controller->show(
             $this->request,
             $this->response,
-            ['id' => 'non-existent-id']
+            ['id' => '00000000-0000-0000-0000-000000000000']
         );
 
         expect($response)->toBeInstanceOf(ResponseInterface::class);
@@ -376,7 +376,7 @@ describe('CompanyController::update', function () {
         $response = $this->controller->update(
             $this->request,
             $this->response,
-            ['id' => 'non-existent-id']
+            ['id' => '00000000-0000-0000-0000-000000000000']
         );
 
         expect($response)->toBeInstanceOf(ResponseInterface::class);
@@ -470,7 +470,7 @@ describe('CompanyController::delete', function () {
         $response = $this->controller->delete(
             $this->request,
             $this->response,
-            ['id' => 'non-existent-id']
+            ['id' => '00000000-0000-0000-0000-000000000000']
         );
 
         expect($response)->toBeInstanceOf(ResponseInterface::class);

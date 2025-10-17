@@ -107,13 +107,15 @@ function createTestControl(array $overrides = []): array
 {
     return array_merge([
         'id' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
+        'control_id' => 'CTL-' . rand(100, 999),
         'name' => 'Test Control',
         'description' => 'Test control description',
-        'type' => 'preventive',
-        'frequency' => 'monthly',
-        'automation' => 'manual',
-        'is_key' => true,
-        'status' => 'active',
+        'control_type' => 'Preventive',
+        'frequency' => 'Monthly',
+        'automation_level' => 'Manual',
+        'is_key_control' => true,
+        'owner_email' => 'owner@example.com',
+        'status' => 'Active',
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => date('Y-m-d H:i:s'),
     ], $overrides);

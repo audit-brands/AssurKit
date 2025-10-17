@@ -118,7 +118,7 @@ describe('GET /api/risks/{id}', function () {
     test('returns 404 for non-existent risk', function () {
         $token = $this->createUserWithToken('viewer@example.com', 'Viewer', 'password123', 'Viewer');
 
-        $response = $this->get('/api/risks/non-existent-id', $this->authHeader($token));
+        $response = $this->get('/api/risks/00000000-0000-0000-0000-000000000000', $this->authHeader($token));
 
         $data = $this->parseJsonResponse($response);
 

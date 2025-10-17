@@ -94,7 +94,7 @@ describe('GET /api/subprocesses/{id}', function () {
     test('returns 404 for non-existent subprocess', function () {
         $token = $this->createUserWithToken('viewer@example.com', 'Viewer', 'password123', 'Viewer');
 
-        $response = $this->get('/api/subprocesses/non-existent-id', $this->authHeader($token));
+        $response = $this->get('/api/subprocesses/00000000-0000-0000-0000-000000000000', $this->authHeader($token));
 
         $data = $this->parseJsonResponse($response);
 
