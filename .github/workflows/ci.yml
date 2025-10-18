@@ -64,7 +64,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: assurkit
+          POSTGRES_PASSWORD: assurkit_test
+          POSTGRES_DB: assurkit_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -78,9 +80,30 @@ jobs:
         with:
           php-version: '8.3'
           coverage: none
+          extensions: mbstring, pdo, pdo_pgsql, json
       - name: Install
         working-directory: api
         run: composer install --prefer-dist --no-progress
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..30}; do
+            PGPASSWORD=assurkit_test psql -h localhost -U assurkit -d assurkit_test -c "SELECT 1" > /dev/null 2>&1 && break
+            echo "Waiting for PostgreSQL to be ready... ($i/30)"
+            sleep 2
+          done
+          PGPASSWORD=assurkit_test psql -h localhost -U assurkit -d assurkit_test -c "SELECT version();"
+
+      - name: Run database migrations
+        working-directory: api
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: assurkit_test
+          DB_USERNAME: assurkit
+          DB_PASSWORD: assurkit_test
+        run: php migrate.php migrate
+
       - name: Lint
         working-directory: api
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
@@ -89,6 +112,12 @@ jobs:
         run: vendor/bin/psalm --output-format=github
       - name: Test
         working-directory: api
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_DATABASE: assurkit_test
+          DB_USERNAME: assurkit
+          DB_PASSWORD: assurkit_test
         run: vendor/bin/pest --ci
         
   all-checks:
