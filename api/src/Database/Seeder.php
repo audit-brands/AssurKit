@@ -26,6 +26,7 @@ class Seeder
         if ($this->isDatabaseSeeded()) {
             echo "⚠️  Database appears to be already seeded.\n";
             echo "    To reseed, please drop and recreate the database.\n\n";
+
             return;
         }
 

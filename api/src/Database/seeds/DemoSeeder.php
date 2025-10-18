@@ -263,7 +263,7 @@ class DemoSeeder
             'metadata' => ['fraud_risk' => true],
         ]);
 
-        echo "  ✓ Created " . count($risks) . " risks\n";
+        echo '  ✓ Created ' . count($risks) . " risks\n";
 
         return $risks;
     }
@@ -379,7 +379,7 @@ class DemoSeeder
             'rationale' => 'Quarterly review may not detect unauthorized vendors in time',
         ]);
 
-        echo "  ✓ Created " . count($controls) . " controls\n";
+        echo '  ✓ Created ' . count($controls) . " controls\n";
 
         return $controls;
     }
@@ -455,7 +455,7 @@ class DemoSeeder
             ],
         ]);
 
-        echo "  ✓ Created " . count($tests) . " tests\n";
+        echo '  ✓ Created ' . count($tests) . " tests\n";
 
         return $tests;
     }
