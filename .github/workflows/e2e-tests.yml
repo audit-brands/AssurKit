@@ -27,11 +27,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, pdo_pgsql
+
+      - name: Install frontend dependencies
         run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+
+      - name: Install API dependencies (for volume mount)
+        working-directory: api
+        run: composer install --no-interaction --prefer-dist
 
       - name: Start backend stack
         working-directory: infra
@@ -65,7 +75,9 @@ jobs:
           done
 
           echo "API failed to become healthy. Checking logs..."
-          docker compose -f infra/docker-compose.yml logs api
+          cd ../infra
+          docker compose logs api
+          docker compose logs postgres
           exit 1
 
       - name: Run Playwright tests
