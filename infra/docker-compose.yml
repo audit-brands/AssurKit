@@ -41,6 +41,12 @@ services:
         condition: service_healthy
     networks:
       - assurkit-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   frontend:
     build:

@@ -37,9 +37,36 @@ jobs:
         working-directory: infra
         run: docker compose up -d
 
+      - name: Wait for containers to be ready
+        working-directory: infra
+        run: |
+          echo "Waiting for containers to start..."
+          sleep 5
+
+          echo "Container status:"
+          docker compose ps
+
+          echo "API container logs:"
+          docker compose logs api
+
+          echo "PostgreSQL container logs:"
+          docker compose logs postgres
+
       - name: Wait for API healthcheck
         run: |
-          timeout 60 bash -c 'until curl -sSf http://localhost:8080/health >/dev/null; do sleep 2; done'
+          echo "Waiting for API health endpoint..."
+          for i in {1..30}; do
+            if curl -sSf http://localhost:8080/health; then
+              echo "API is healthy!"
+              exit 0
+            fi
+            echo "Attempt $i/30 failed, waiting 2 seconds..."
+            sleep 2
+          done
+
+          echo "API failed to become healthy. Checking logs..."
+          docker compose -f infra/docker-compose.yml logs api
+          exit 1
 
       - name: Run Playwright tests
         run: npm run test:e2e
