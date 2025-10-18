@@ -169,7 +169,7 @@ export function ControlTable({ riskId }: ControlTableProps) {
   }
 
   const showEmptyState = !controls.length && !debouncedSearch && !showKeyOnly
-  const showNoResults = !controls.length && (debouncedSearch || showKeyOnly)
+  const showNoResults = !controls.length && (Boolean(debouncedSearch) || showKeyOnly)
 
   return (
     <div className="space-y-4">
