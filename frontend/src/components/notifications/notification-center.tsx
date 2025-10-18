@@ -122,16 +122,22 @@ export function NotificationCenter() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" className="relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative"
+          aria-label={unreadCount && unreadCount > 0 ? `Notifications (${unreadCount} unread)` : 'Notifications'}
+        >
           {unreadCount && unreadCount > 0 ? (
-            <BellDot className="h-5 w-5" />
+            <BellDot className="h-5 w-5" aria-hidden="true" />
           ) : (
-            <Bell className="h-5 w-5" />
+            <Bell className="h-5 w-5" aria-hidden="true" />
           )}
           {unreadCount && unreadCount > 0 && (
             <Badge
               variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs"
+              aria-label={`${unreadCount} unread notifications`}
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
@@ -150,13 +156,13 @@ export function NotificationCenter() {
                   onClick={handleMarkAllAsRead}
                   disabled={!unreadCount || unreadCount === 0}
                 >
-                  <CheckCheck className="h-4 w-4 mr-2" />
+                  <CheckCheck className="h-4 w-4 mr-2" aria-hidden="true" />
                   Mark all read
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Settings className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" aria-label="Notification settings">
+                      <Settings className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -174,7 +180,7 @@ export function NotificationCenter() {
           </CardHeader>
           <CardContent className="p-0">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 mx-4 mb-4">
+            <TabsList className="grid w-full grid-cols-2 mx-4 mb-4" aria-label="Notification filters">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="unread" className="relative">
                   Unread

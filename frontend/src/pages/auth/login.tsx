@@ -54,7 +54,7 @@ export function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800" role="alert" aria-live="assertive">
                 {error}
               </div>
             )}

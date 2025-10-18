@@ -51,12 +51,20 @@ export function MainLayout() {
 
   return (
     <div className="flex h-screen bg-gray-50">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-4 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-blue-600 focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Sidebar */}
-      <div className="flex w-64 flex-col bg-gray-900">
-        <div className="flex h-16 items-center justify-center bg-gray-800">
-          <h1 className="text-xl font-bold text-white">AssurKit</h1>
+      <div className="flex w-64 flex-col bg-gray-900" role="complementary">
+        <div className="flex h-16 items-center justify-center bg-gray-800" role="banner">
+          <h1 className="text-xl font-bold text-white" aria-label="AssurKit">
+            AssurKit
+          </h1>
         </div>
-        <nav className="flex-1 space-y-1 px-2 py-4">
+        <nav className="flex-1 space-y-1 px-2 py-4" aria-label="Primary navigation">
           {filteredNavigation.map((item) => {
             const isActive = location.pathname.startsWith(item.href)
             const Icon = item.icon
@@ -69,11 +77,12 @@ export function MainLayout() {
                     ? 'bg-gray-800 text-white'
                     : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                 }`}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <Icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                <Icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
                 {item.name}
                 {isActive && (
-                  <ChevronRight className="ml-auto h-4 w-4" />
+                  <ChevronRight className="ml-auto h-4 w-4" aria-hidden="true" />
                 )}
               </Link>
             )
@@ -92,8 +101,10 @@ export function MainLayout() {
               size="icon"
               onClick={handleLogout}
               className="text-gray-400 hover:text-white"
+              aria-label="Sign out"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-5 w-5" aria-hidden="true" />
+              <span className="sr-only">Sign out</span>
             </Button>
           </div>
         </div>
@@ -102,7 +113,7 @@ export function MainLayout() {
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6">
+        <header className="flex h-16 items-center justify-between border-b bg-white px-6" role="banner">
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold text-gray-800">
               {filteredNavigation.find(item => location.pathname.startsWith(item.href))?.name || 'Dashboard'}
@@ -110,19 +121,19 @@ export function MainLayout() {
           </div>
           <div className="flex items-center space-x-4">
             <NotificationCenter />
-            <span className="text-sm text-gray-600">
+            <time className="text-sm text-gray-600" aria-label="Current date">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
               })}
-            </span>
+            </time>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+        <main id="main-content" className="flex-1 overflow-y-auto bg-gray-50 p-6" tabIndex={-1}>
           <Outlet />
         </main>
       </div>
