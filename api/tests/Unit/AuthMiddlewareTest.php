@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use AssurKit\Middleware\AuthMiddleware;
+use AssurKit\Models\Role;
 use AssurKit\Models\User;
 use AssurKit\Services\JwtService;
 use Psr\Http\Message\ResponseInterface;
@@ -13,6 +14,11 @@ beforeEach(function () {
     $_ENV['JWT_SECRET'] = 'test-secret-key-for-testing';
     $this->jwtService = new JwtService();
     $this->middleware = new AuthMiddleware($this->jwtService);
+
+    // Ensure Admin role exists for tests
+    if (!Role::where('name', 'Admin')->exists()) {
+        Role::create(['name' => 'Admin']);
+    }
 
     // Mock request
     $this->request = Mockery::mock(ServerRequestInterface::class);
