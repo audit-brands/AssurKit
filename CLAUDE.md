@@ -94,6 +94,13 @@ vendor/bin/psalm --output-format=github           # Static analysis (Psalm)
 vendor/bin/pest --ci --coverage-clover=coverage.xml # Unit tests (PHPUnit/Pest)
 ```
 
+**Note on Composer:** The `composer` binary is **not tracked in git**. Install Composer globally or download it locally:
+- Global: `brew install composer` (macOS) or follow https://getcomposer.org/download/
+- Local: `cd api && curl -sS https://getcomposer.org/installer | php` (creates `composer.phar`)
+- Docker users don't need local Composer (it's included in the API container)
+
+See [README.md - Composer Installation](#composer-installation) for detailed instructions.
+
 ### Docker Development
 ```bash
 cd infra && docker-compose up    # Start all services from infra directory

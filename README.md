@@ -20,6 +20,7 @@ AssurKit is a community-driven, open-source Governance, Risk, and Compliance (GR
 - Docker and Docker Compose
 - Node.js 20+ (for local development)
 - PHP 8.2+ (for local development)
+- Composer (for local development) - See [Composer Installation](#composer-installation) below
 
 ### Running with Docker
 
@@ -111,6 +112,43 @@ cd api
 composer install
 php -S localhost:8080 -t public
 ```
+
+#### Composer Installation
+
+For local backend development, you need Composer to manage PHP dependencies. The `composer` binary is intentionally **not** included in this repository.
+
+**Option 1: Global Installation (Recommended)**
+
+```bash
+# macOS (via Homebrew)
+brew install composer
+
+# Linux
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+
+# Windows
+# Download and run the installer from https://getcomposer.org/download/
+```
+
+**Option 2: Project-Local Installation**
+
+```bash
+cd api
+curl -sS https://getcomposer.org/installer | php
+# This creates composer.phar in the api directory
+# Use it with: php composer.phar install
+```
+
+**Verify Installation:**
+```bash
+composer --version
+# Should output: Composer version 2.x.x
+```
+
+For more details, visit the [official Composer documentation](https://getcomposer.org/doc/00-intro.md).
+
+**Note:** Docker users don't need to install Composer locally, as it's included in the API Docker container.
 
 ## Architecture
 

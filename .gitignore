@@ -2,6 +2,11 @@
 node_modules/
 vendor/
 
+# Composer binaries (should be installed per environment)
+composer.phar
+api/composer
+frontend/composer
+
 # Build outputs
 dist/
 build/
@@ -26,6 +31,8 @@ junit.xml
 coverage.xml
 .phpunit.result.cache
 .pest/
+playwright-report/
+test-results/
 
 # Docker
 docker-compose.override.yml
