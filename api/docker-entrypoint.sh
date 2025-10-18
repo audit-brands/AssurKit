@@ -7,7 +7,12 @@ echo "Starting AssurKit API..."
 echo "Waiting for database connection..."
 until php -r "
 try {
-    \$pdo = new PDO('pgsql:host=\$_ENV[DB_HOST];port=\$_ENV[DB_PORT];dbname=\$_ENV[DB_DATABASE]', \$_ENV[DB_USERNAME], \$_ENV[DB_PASSWORD]);
+    \$host = getenv('DB_HOST');
+    \$port = getenv('DB_PORT');
+    \$dbname = getenv('DB_DATABASE');
+    \$username = getenv('DB_USERNAME');
+    \$password = getenv('DB_PASSWORD');
+    \$pdo = new PDO(\"pgsql:host=\$host;port=\$port;dbname=\$dbname\", \$username, \$password);
     echo 'Database connection successful' . PHP_EOL;
 } catch (PDOException \$e) {
     echo 'Database connection failed: ' . \$e->getMessage() . PHP_EOL;
