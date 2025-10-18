@@ -42,18 +42,25 @@ When you run `docker-compose up` from the `infra/` directory for the first time,
 
 1. **Initialize the PostgreSQL database** with the required schema
 2. **Run database migrations** to create all tables (users, roles, user_roles, etc.)
-3. **Seed default data** including:
-   - Default roles: Admin, Manager, Tester, Viewer
-   - Default admin user account
+3. **Seed comprehensive demo data** including:
+   - 4 user accounts with different roles
+   - Demo company (Acme Corporation) with business processes
+   - Risks and controls with RCM mappings
+   - Sample tests with evidence
+   - Complete SOX workflow demonstration
 
-#### Default Admin Account
+#### Demo User Accounts
 
-After the initial setup, you can log in with:
-- **Email**: `admin@assurkit.local`
-- **Password**: `admin123`
-- **Role**: Admin (full system access)
+After the initial setup, you can log in with any of these demo accounts:
 
-**⚠️ IMPORTANT**: Change the default admin credentials immediately after first login!
+| Role | Email | Password | Access Level |
+|------|-------|----------|--------------|
+| **Admin** | `admin@assurkit.local` | `admin123` | Full system access, user management |
+| **Manager** | `manager@assurkit.local` | `manager123` | Create/edit entities, controls, tests |
+| **Tester** | `tester@assurkit.local` | `tester123` | Execute tests, upload evidence |
+| **Viewer** | `viewer@assurkit.local` | `viewer123` | Read-only access for auditors |
+
+**⚠️ IMPORTANT**: Change these default credentials immediately in production!
 
 #### Customizing Default Settings
 
